@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using QuanLyClb.Api.Authorization;
 using QuanLyClb.Application.Interfaces;
 using QuanLyClb.Application.Requests;
 
@@ -7,7 +8,7 @@ namespace QuanLyClb.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-[Authorize]
+[Authorize(Policy = AuthorizationPolicies.ViewStudents)]
 public class StudentsController : ControllerBase
 {
     private readonly IStudentService _studentService;
@@ -37,6 +38,7 @@ public class StudentsController : ControllerBase
     }
 
     [HttpPost]
+    [Authorize(Policy = AuthorizationPolicies.ManageStudents)]
     public async Task<IActionResult> Create([FromBody] CreateStudentRequest request, CancellationToken cancellationToken)
     {
         var student = await _studentService.CreateAsync(request, cancellationToken);
@@ -44,6 +46,7 @@ public class StudentsController : ControllerBase
     }
 
     [HttpPut("{id:guid}")]
+    [Authorize(Policy = AuthorizationPolicies.ManageStudents)]
     public async Task<IActionResult> Update(Guid id, [FromBody] UpdateStudentRequest request, CancellationToken cancellationToken)
     {
         if (id != request.Id)
@@ -56,6 +59,7 @@ public class StudentsController : ControllerBase
     }
 
     [HttpPost("{id:guid}/status")]
+    [Authorize(Policy = AuthorizationPolicies.ManageStudents)]
     public async Task<IActionResult> ChangeStatus(Guid id, [FromBody] ChangeStudentStatusRequest request, CancellationToken cancellationToken)
     {
         if (id != request.StudentId)
