@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using QuanLyClb.Api.Authorization;
 using QuanLyClb.Application.Interfaces;
 using QuanLyClb.Application.Requests;
 
@@ -18,6 +19,7 @@ public class ReportsController : ControllerBase
     }
 
     [HttpGet("tuition")]
+    [Authorize(Policy = AuthorizationPolicies.ViewFinancialReports)]
     public async Task<IActionResult> TuitionReport([FromQuery] DateTime from, [FromQuery] DateTime to, CancellationToken cancellationToken)
     {
         var request = new TuitionReportRequest(from, to);
@@ -26,6 +28,7 @@ public class ReportsController : ControllerBase
     }
 
     [HttpGet("classes/{classId:guid}/roster")]
+    [Authorize(Policy = AuthorizationPolicies.ViewClassReports)]
     public async Task<IActionResult> ClassRoster(Guid classId, CancellationToken cancellationToken)
     {
         var roster = await _reportService.GetClassRosterAsync(new ClassRosterRequest(classId), cancellationToken);

@@ -1,6 +1,7 @@
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using QuanLyClb.Api.Authorization;
 using QuanLyClb.Infrastructure.Configurations;
 using QuanLyClb.Infrastructure.Extensions;
 using QuanLyClb.Infrastructure.Persistence;
@@ -34,7 +35,7 @@ builder.Services
         };
     });
 
-builder.Services.AddAuthorization();
+builder.Services.AddAuthorization(options => AuthorizationPolicies.Configure(options));
 
 var app = builder.Build();
 

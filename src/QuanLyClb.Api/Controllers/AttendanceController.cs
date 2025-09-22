@@ -1,6 +1,7 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using QuanLyClb.Api.Authorization;
 using QuanLyClb.Application.Interfaces;
 using QuanLyClb.Application.Requests;
 
@@ -8,7 +9,7 @@ namespace QuanLyClb.Api.Controllers;
 
 [ApiController]
 [Route("api/classes/{classId:guid}/[controller]")]
-[Authorize]
+[Authorize(Policy = AuthorizationPolicies.ViewAttendance)]
 public class AttendanceController : ControllerBase
 {
     private readonly IAttendanceService _attendanceService;
@@ -26,6 +27,7 @@ public class AttendanceController : ControllerBase
     }
 
     [HttpPost]
+    [Authorize(Policy = AuthorizationPolicies.ManageAttendance)]
     public async Task<IActionResult> CreateSession(Guid classId, [FromBody] CreateAttendanceSessionRequest request, CancellationToken cancellationToken)
     {
         if (classId != request.ClassId)
@@ -39,6 +41,7 @@ public class AttendanceController : ControllerBase
     }
 
     [HttpPost("{sessionId:guid}/records")]
+    [Authorize(Policy = AuthorizationPolicies.ManageAttendance)]
     public async Task<IActionResult> MarkAttendance(Guid classId, Guid sessionId, [FromBody] MarkAttendanceRequest request, CancellationToken cancellationToken)
     {
         if (sessionId != request.SessionId)
