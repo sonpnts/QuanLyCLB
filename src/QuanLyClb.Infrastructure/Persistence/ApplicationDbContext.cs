@@ -17,6 +17,7 @@ public class ApplicationDbContext : DbContext
     public DbSet<AttendanceSession> AttendanceSessions => Set<AttendanceSession>();
     public DbSet<AttendanceRecord> AttendanceRecords => Set<AttendanceRecord>();
     public DbSet<TuitionPayment> TuitionPayments => Set<TuitionPayment>();
+    public DbSet<RolePermission> RolePermissions => Set<RolePermission>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -95,6 +96,14 @@ public class ApplicationDbContext : DbContext
                 .WithMany(u => u.CollectedPayments)
                 .HasForeignKey(p => p.CollectedById)
                 .OnDelete(DeleteBehavior.SetNull);
+        });
+
+        modelBuilder.Entity<RolePermission>(entity =>
+        {
+            entity.Property(rp => rp.PolicyName)
+                .HasMaxLength(200);
+            entity.HasIndex(rp => new { rp.PolicyName, rp.Role })
+                .IsUnique();
         });
     }
 }

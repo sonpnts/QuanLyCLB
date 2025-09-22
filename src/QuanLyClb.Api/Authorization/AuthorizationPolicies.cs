@@ -1,4 +1,5 @@
-using Microsoft.AspNetCore.Authorization;
+using System;
+using System.Collections.Generic;
 using QuanLyClb.Domain.Enums;
 
 namespace QuanLyClb.Api.Authorization;
@@ -18,78 +19,80 @@ public static class AuthorizationPolicies
     public const string ViewFinancialReports = "ViewFinancialReports";
     public const string ViewClassReports = "ViewClassReports";
 
-    public static void Configure(AuthorizationOptions options)
-    {
-        options.AddPolicy(ViewStudents, policy =>
-            policy.RequireRole(
-                UserRole.Admin.ToString(),
-                UserRole.Staff.ToString(),
-                UserRole.Coach.ToString(),
-                UserRole.Assistant.ToString()));
-
-        options.AddPolicy(ManageStudents, policy =>
-            policy.RequireRole(
-                UserRole.Admin.ToString(),
-                UserRole.Staff.ToString()));
-
-        options.AddPolicy(ViewClasses, policy =>
-            policy.RequireRole(
-                UserRole.Admin.ToString(),
-                UserRole.Staff.ToString(),
-                UserRole.Coach.ToString(),
-                UserRole.Assistant.ToString()));
-
-        options.AddPolicy(ManageClasses, policy =>
-            policy.RequireRole(
-                UserRole.Admin.ToString(),
-                UserRole.Coach.ToString()));
-
-        options.AddPolicy(ViewSchedules, policy =>
-            policy.RequireRole(
-                UserRole.Admin.ToString(),
-                UserRole.Staff.ToString(),
-                UserRole.Coach.ToString(),
-                UserRole.Assistant.ToString()));
-
-        options.AddPolicy(ManageSchedules, policy =>
-            policy.RequireRole(
-                UserRole.Admin.ToString(),
-                UserRole.Coach.ToString(),
-                UserRole.Assistant.ToString()));
-
-        options.AddPolicy(ViewAttendance, policy =>
-            policy.RequireRole(
-                UserRole.Admin.ToString(),
-                UserRole.Staff.ToString(),
-                UserRole.Coach.ToString(),
-                UserRole.Assistant.ToString()));
-
-        options.AddPolicy(ManageAttendance, policy =>
-            policy.RequireRole(
-                UserRole.Admin.ToString(),
-                UserRole.Coach.ToString(),
-                UserRole.Assistant.ToString()));
-
-        options.AddPolicy(ManageEnrollments, policy =>
-            policy.RequireRole(
-                UserRole.Admin.ToString(),
-                UserRole.Staff.ToString()));
-
-        options.AddPolicy(ManagePayments, policy =>
-            policy.RequireRole(
-                UserRole.Admin.ToString(),
-                UserRole.Staff.ToString()));
-
-        options.AddPolicy(ViewFinancialReports, policy =>
-            policy.RequireRole(
-                UserRole.Admin.ToString(),
-                UserRole.Staff.ToString()));
-
-        options.AddPolicy(ViewClassReports, policy =>
-            policy.RequireRole(
-                UserRole.Admin.ToString(),
-                UserRole.Staff.ToString(),
-                UserRole.Coach.ToString(),
-                UserRole.Assistant.ToString()));
-    }
+    public static IReadOnlyDictionary<string, UserRole[]> DefaultRoleMappings { get; } =
+        new Dictionary<string, UserRole[]>(StringComparer.OrdinalIgnoreCase)
+        {
+            [ViewStudents] = new[]
+            {
+                UserRole.Admin,
+                UserRole.Staff,
+                UserRole.Coach,
+                UserRole.Assistant
+            },
+            [ManageStudents] = new[]
+            {
+                UserRole.Admin,
+                UserRole.Staff
+            },
+            [ViewClasses] = new[]
+            {
+                UserRole.Admin,
+                UserRole.Staff,
+                UserRole.Coach,
+                UserRole.Assistant
+            },
+            [ManageClasses] = new[]
+            {
+                UserRole.Admin,
+                UserRole.Coach
+            },
+            [ViewSchedules] = new[]
+            {
+                UserRole.Admin,
+                UserRole.Staff,
+                UserRole.Coach,
+                UserRole.Assistant
+            },
+            [ManageSchedules] = new[]
+            {
+                UserRole.Admin,
+                UserRole.Coach,
+                UserRole.Assistant
+            },
+            [ViewAttendance] = new[]
+            {
+                UserRole.Admin,
+                UserRole.Staff,
+                UserRole.Coach,
+                UserRole.Assistant
+            },
+            [ManageAttendance] = new[]
+            {
+                UserRole.Admin,
+                UserRole.Coach,
+                UserRole.Assistant
+            },
+            [ManageEnrollments] = new[]
+            {
+                UserRole.Admin,
+                UserRole.Staff
+            },
+            [ManagePayments] = new[]
+            {
+                UserRole.Admin,
+                UserRole.Staff
+            },
+            [ViewFinancialReports] = new[]
+            {
+                UserRole.Admin,
+                UserRole.Staff
+            },
+            [ViewClassReports] = new[]
+            {
+                UserRole.Admin,
+                UserRole.Staff,
+                UserRole.Coach,
+                UserRole.Assistant
+            }
+        };
 }
