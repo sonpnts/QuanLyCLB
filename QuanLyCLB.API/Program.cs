@@ -12,8 +12,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Database
 builder.Services.AddDbContext<QuanLyCLBContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection") ?? 
-                        "Server=(localdb)\\mssqllocaldb;Database=QuanLyCLBDb;Trusted_Connection=true;"));
+    options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection") ?? 
+                     "Data Source=QuanLyCLB.db"));
 
 // JWT Authentication
 var secretKey = builder.Configuration["Jwt:SecretKey"] ?? "your-super-secret-key-that-should-be-at-least-256-bits-long";
@@ -105,6 +105,9 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+// Enable static files for uploaded photos
+app.UseStaticFiles();
 
 app.UseCors("AllowAll");
 
