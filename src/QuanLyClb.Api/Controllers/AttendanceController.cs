@@ -9,7 +9,7 @@ namespace QuanLyClb.Api.Controllers;
 
 [ApiController]
 [Route("api/classes/{classId:guid}/[controller]")]
-[HasPermission(Permission.ViewAttendance)]
+[HasPermission("Attendance", PermissionAction.View)]
 public class AttendanceController : ControllerBase
 {
     private readonly IAttendanceService _attendanceService;
@@ -27,7 +27,7 @@ public class AttendanceController : ControllerBase
     }
 
     [HttpPost]
-    [HasPermission(Permission.ManageAttendance)]
+    [HasPermission("Attendance", PermissionAction.Create)]
     public async Task<IActionResult> CreateSession(Guid classId, [FromBody] CreateAttendanceSessionRequest request, CancellationToken cancellationToken)
     {
         if (classId != request.ClassId)
@@ -41,7 +41,7 @@ public class AttendanceController : ControllerBase
     }
 
     [HttpPost("{sessionId:guid}/records")]
-    [HasPermission(Permission.ManageAttendance)]
+    [HasPermission("Attendance", PermissionAction.Update)]
     public async Task<IActionResult> MarkAttendance(Guid classId, Guid sessionId, [FromBody] MarkAttendanceRequest request, CancellationToken cancellationToken)
     {
         if (sessionId != request.SessionId)

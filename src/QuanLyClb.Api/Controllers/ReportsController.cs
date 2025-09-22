@@ -8,7 +8,7 @@ namespace QuanLyClb.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-[HasPermission(Permission.ViewFinancialReports)]
+[HasPermission("FinancialReports", PermissionAction.View)]
 public class ReportsController : ControllerBase
 {
     private readonly IReportService _reportService;
@@ -27,7 +27,7 @@ public class ReportsController : ControllerBase
     }
 
     [HttpGet("classes/{classId:guid}/roster")]
-    [HasPermission(Permission.ViewClassReports)]
+    [HasPermission("ClassReports", PermissionAction.View)]
     public async Task<IActionResult> ClassRoster(Guid classId, CancellationToken cancellationToken)
     {
         var roster = await _reportService.GetClassRosterAsync(new ClassRosterRequest(classId), cancellationToken);

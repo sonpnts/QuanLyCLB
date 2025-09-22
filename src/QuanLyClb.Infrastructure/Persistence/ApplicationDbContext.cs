@@ -100,9 +100,9 @@ public class ApplicationDbContext : DbContext
 
         modelBuilder.Entity<RolePermission>(entity =>
         {
-            entity.Property(rp => rp.PolicyName)
-                .HasMaxLength(200);
-            entity.HasIndex(rp => new { rp.PolicyName, rp.Role })
+            entity.Property(rp => rp.PermissionsJson)
+                .IsRequired();
+            entity.HasIndex(rp => rp.Role)
                 .IsUnique();
         });
     }
