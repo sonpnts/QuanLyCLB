@@ -1,14 +1,14 @@
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using QuanLyClb.Api.Authorization;
 using QuanLyClb.Application.Interfaces;
 using QuanLyClb.Application.Requests;
+using QuanLyClb.Domain.Enums;
 
 namespace QuanLyClb.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-[Authorize(Policy = AuthorizationPolicies.ManagePayments)]
+[HasPermission(Permission.ManagePayments)]
 public class PaymentsController : ControllerBase
 {
     private readonly IPaymentService _paymentService;

@@ -1,7 +1,9 @@
 using System.Text;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using QuanLyClb.Api.Authorization;
+using QuanLyClb.Infrastructure.Authorization;
 using QuanLyClb.Infrastructure.Configurations;
 using QuanLyClb.Infrastructure.Extensions;
 using QuanLyClb.Infrastructure.Persistence;
@@ -13,6 +15,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddInfrastructure(builder.Configuration);
+builder.Services.AddMemoryCache();
 
 var jwtSection = builder.Configuration.GetSection(JwtOptions.SectionName);
 var signingKey = jwtSection.GetValue<string>(nameof(JwtOptions.SigningKey)) ?? string.Empty;
@@ -35,14 +38,16 @@ builder.Services
         };
     });
 
-builder.Services.AddAuthorization(options => AuthorizationPolicies.Configure(options));
+builder.Services.AddAuthorization();
+builder.Services.AddSingleton<IAuthorizationPolicyProvider, DynamicAuthorizationPolicyProvider>();
 
 var app = builder.Build();
 
-using (var scope = app.Services.CreateScope())
+await using (var scope = app.Services.CreateAsyncScope())
 {
     var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-    dbContext.Database.EnsureCreated();
+    await dbContext.Database.EnsureCreatedAsync();
+    await PermissionSeeder.SeedAsync(dbContext);
 }
 
 if (app.Environment.IsDevelopment())
@@ -58,4 +63,4 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-app.Run();
+await app.RunAsync();

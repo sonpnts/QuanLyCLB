@@ -1,14 +1,14 @@
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using QuanLyClb.Api.Authorization;
 using QuanLyClb.Application.Interfaces;
 using QuanLyClb.Application.Requests;
+using QuanLyClb.Domain.Enums;
 
 namespace QuanLyClb.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-[Authorize(Policy = AuthorizationPolicies.ViewClasses)]
+[HasPermission(Permission.ViewClasses)]
 public class ClassesController : ControllerBase
 {
     private readonly IClassService _classService;
@@ -40,7 +40,7 @@ public class ClassesController : ControllerBase
     }
 
     [HttpPost]
-    [Authorize(Policy = AuthorizationPolicies.ManageClasses)]
+    [HasPermission(Permission.ManageClasses)]
     public async Task<IActionResult> Create([FromBody] CreateClassRequest request, CancellationToken cancellationToken)
     {
         var trainingClass = await _classService.CreateAsync(request, cancellationToken);
@@ -48,7 +48,7 @@ public class ClassesController : ControllerBase
     }
 
     [HttpPut("{id:guid}")]
-    [Authorize(Policy = AuthorizationPolicies.ManageClasses)]
+    [HasPermission(Permission.ManageClasses)]
     public async Task<IActionResult> Update(Guid id, [FromBody] UpdateClassRequest request, CancellationToken cancellationToken)
     {
         if (id != request.Id)
@@ -61,7 +61,7 @@ public class ClassesController : ControllerBase
     }
 
     [HttpPost("clone")]
-    [Authorize(Policy = AuthorizationPolicies.ManageClasses)]
+    [HasPermission(Permission.ManageClasses)]
     public async Task<IActionResult> Clone([FromBody] CloneClassRequest request, CancellationToken cancellationToken)
     {
         var trainingClass = await _classService.CloneAsync(request, cancellationToken);
@@ -69,7 +69,7 @@ public class ClassesController : ControllerBase
     }
 
     [HttpPost("{id:guid}/archive")]
-    [Authorize(Policy = AuthorizationPolicies.ManageClasses)]
+    [HasPermission(Permission.ManageClasses)]
     public async Task<IActionResult> Archive(Guid id, [FromBody] ArchiveClassRequest request, CancellationToken cancellationToken)
     {
         if (id != request.ClassId)
@@ -82,7 +82,7 @@ public class ClassesController : ControllerBase
     }
 
     [HttpPut("{id:guid}/schedule")]
-    [Authorize(Policy = AuthorizationPolicies.ManageSchedules)]
+    [HasPermission(Permission.ManageSchedules)]
     public async Task<IActionResult> UpdateSchedule(Guid id, [FromBody] UpsertScheduleRequest request, CancellationToken cancellationToken)
     {
         if (id != request.ClassId)
@@ -95,7 +95,7 @@ public class ClassesController : ControllerBase
     }
 
     [HttpGet("{id:guid}/schedule")]
-    [Authorize(Policy = AuthorizationPolicies.ViewSchedules)]
+    [HasPermission(Permission.ViewSchedules)]
     public async Task<IActionResult> GetSchedule(Guid id, CancellationToken cancellationToken)
     {
         var schedules = await _scheduleService.GetByClassAsync(id, cancellationToken);
