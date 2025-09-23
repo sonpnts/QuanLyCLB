@@ -8,7 +8,6 @@ namespace QuanLyClb.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-[HasPermission(Permission.ManageEnrollments)]
 public class EnrollmentsController : ControllerBase
 {
     private readonly IEnrollmentService _enrollmentService;
@@ -19,6 +18,7 @@ public class EnrollmentsController : ControllerBase
     }
 
     [HttpPost]
+    [HasPermission("Enrollments", PermissionAction.Create)]
     public async Task<IActionResult> Enroll([FromBody] EnrollStudentRequest request, CancellationToken cancellationToken)
     {
         var enrollment = await _enrollmentService.EnrollAsync(request, cancellationToken);
@@ -26,6 +26,7 @@ public class EnrollmentsController : ControllerBase
     }
 
     [HttpPost("transfer")]
+    [HasPermission("Enrollments", PermissionAction.Update)]
     public async Task<IActionResult> Transfer([FromBody] TransferStudentRequest request, CancellationToken cancellationToken)
     {
         await _enrollmentService.TransferAsync(request, cancellationToken);

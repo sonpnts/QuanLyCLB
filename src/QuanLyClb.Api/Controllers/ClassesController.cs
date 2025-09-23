@@ -8,7 +8,7 @@ namespace QuanLyClb.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-[HasPermission(Permission.ViewClasses)]
+[HasPermission("Classes", PermissionAction.View)]
 public class ClassesController : ControllerBase
 {
     private readonly IClassService _classService;
@@ -40,7 +40,7 @@ public class ClassesController : ControllerBase
     }
 
     [HttpPost]
-    [HasPermission(Permission.ManageClasses)]
+    [HasPermission("Classes", PermissionAction.Create)]
     public async Task<IActionResult> Create([FromBody] CreateClassRequest request, CancellationToken cancellationToken)
     {
         var trainingClass = await _classService.CreateAsync(request, cancellationToken);
@@ -48,7 +48,7 @@ public class ClassesController : ControllerBase
     }
 
     [HttpPut("{id:guid}")]
-    [HasPermission(Permission.ManageClasses)]
+    [HasPermission("Classes", PermissionAction.Update)]
     public async Task<IActionResult> Update(Guid id, [FromBody] UpdateClassRequest request, CancellationToken cancellationToken)
     {
         if (id != request.Id)
@@ -61,7 +61,7 @@ public class ClassesController : ControllerBase
     }
 
     [HttpPost("clone")]
-    [HasPermission(Permission.ManageClasses)]
+    [HasPermission("Classes", PermissionAction.Create)]
     public async Task<IActionResult> Clone([FromBody] CloneClassRequest request, CancellationToken cancellationToken)
     {
         var trainingClass = await _classService.CloneAsync(request, cancellationToken);
@@ -69,7 +69,7 @@ public class ClassesController : ControllerBase
     }
 
     [HttpPost("{id:guid}/archive")]
-    [HasPermission(Permission.ManageClasses)]
+    [HasPermission("Classes", PermissionAction.Update)]
     public async Task<IActionResult> Archive(Guid id, [FromBody] ArchiveClassRequest request, CancellationToken cancellationToken)
     {
         if (id != request.ClassId)
@@ -82,7 +82,7 @@ public class ClassesController : ControllerBase
     }
 
     [HttpPut("{id:guid}/schedule")]
-    [HasPermission(Permission.ManageSchedules)]
+    [HasPermission("Schedules", PermissionAction.Update)]
     public async Task<IActionResult> UpdateSchedule(Guid id, [FromBody] UpsertScheduleRequest request, CancellationToken cancellationToken)
     {
         if (id != request.ClassId)
@@ -95,7 +95,7 @@ public class ClassesController : ControllerBase
     }
 
     [HttpGet("{id:guid}/schedule")]
-    [HasPermission(Permission.ViewSchedules)]
+    [HasPermission("Schedules", PermissionAction.View)]
     public async Task<IActionResult> GetSchedule(Guid id, CancellationToken cancellationToken)
     {
         var schedules = await _scheduleService.GetByClassAsync(id, cancellationToken);

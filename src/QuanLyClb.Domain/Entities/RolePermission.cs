@@ -4,7 +4,7 @@ namespace QuanLyClb.Domain.Entities;
 
 public class RolePermission : BaseEntity
 {
-    public string PolicyName { get; set; } = string.Empty;
-
     public UserRole Role { get; set; }
+
+    public string PermissionsJson { get; set; } = "{}";
 }

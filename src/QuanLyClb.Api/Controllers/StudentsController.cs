@@ -8,7 +8,7 @@ namespace QuanLyClb.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-[HasPermission(Permission.ViewStudents)]
+[HasPermission("Students", PermissionAction.View)]
 public class StudentsController : ControllerBase
 {
     private readonly IStudentService _studentService;
@@ -38,7 +38,7 @@ public class StudentsController : ControllerBase
     }
 
     [HttpPost]
-    [HasPermission(Permission.ManageStudents)]
+    [HasPermission("Students", PermissionAction.Create)]
     public async Task<IActionResult> Create([FromBody] CreateStudentRequest request, CancellationToken cancellationToken)
     {
         var student = await _studentService.CreateAsync(request, cancellationToken);
@@ -46,7 +46,7 @@ public class StudentsController : ControllerBase
     }
 
     [HttpPut("{id:guid}")]
-    [HasPermission(Permission.ManageStudents)]
+    [HasPermission("Students", PermissionAction.Update)]
     public async Task<IActionResult> Update(Guid id, [FromBody] UpdateStudentRequest request, CancellationToken cancellationToken)
     {
         if (id != request.Id)
@@ -59,7 +59,7 @@ public class StudentsController : ControllerBase
     }
 
     [HttpPost("{id:guid}/status")]
-    [HasPermission(Permission.ManageStudents)]
+    [HasPermission("Students", PermissionAction.Update)]
     public async Task<IActionResult> ChangeStatus(Guid id, [FromBody] ChangeStudentStatusRequest request, CancellationToken cancellationToken)
     {
         if (id != request.StudentId)
