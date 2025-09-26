@@ -16,8 +16,12 @@ public static class DependencyInjection
 
         services.AddDbContext<ClubManagementDbContext>(options =>
         {
-            var connectionString = configuration.GetConnectionString("Default") ?? "Data Source=club.db";
-            options.UseSqlite(connectionString);
+            // Lấy chuỗi kết nối SQL Server từ cấu hình, mặc định sử dụng LocalDB cho môi trường dev
+            var connectionString = configuration.GetConnectionString("Default")
+                ?? "Server=(localdb)\\MSSQLLocalDB;Database=QuanLyCLB;Trusted_Connection=True;TrustServerCertificate=True;";
+
+            // Khởi tạo DbContext với provider SQL Server cho tầng hạ tầng (Infrastructure)
+            options.UseSqlServer(connectionString);
         });
 
         services.AddScoped<IInstructorService, InstructorService>();
