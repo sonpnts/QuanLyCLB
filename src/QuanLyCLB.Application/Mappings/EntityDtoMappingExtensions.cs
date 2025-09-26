@@ -50,7 +50,7 @@ public static class EntityDtoMappingExtensions
         entity.Id,
         entity.ClassScheduleId,
         entity.InstructorId,
-        entity.CreatedAt,
+        entity.CreatedDate.ToDateTime(entity.CreatedTime),
         entity.Reason,
         entity.CreatedBy,
         entity.IsApproved,

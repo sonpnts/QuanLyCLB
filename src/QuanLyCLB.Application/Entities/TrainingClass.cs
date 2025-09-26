@@ -20,6 +20,12 @@ public class TrainingClass
     public Guid InstructorId { get; set; }
     public Instructor? Instructor { get; set; }
 
+    public DateOnly CreatedDate { get; set; } = DateOnly.FromDateTime(DateTime.UtcNow);
+
+    public TimeOnly CreatedTime { get; set; } = TimeOnly.FromDateTime(DateTime.UtcNow);
+
+    public bool IsActive { get; set; } = true;
+
     // Danh sách lịch học (navigation property)
     public ICollection<ClassSchedule> Schedules { get; set; } = new List<ClassSchedule>();
 }

@@ -10,12 +10,16 @@ public class InstructorConfiguration : IEntityTypeConfiguration<Instructor>
     {
         builder.ToTable("Instructors");
         builder.HasKey(x => x.Id);
+        builder.Property(x => x.FullName).HasMaxLength(200).IsRequired();
+        builder.Property(x => x.Email).HasMaxLength(200).IsRequired();
+        builder.Property(x => x.PhoneNumber).HasMaxLength(50);
         builder.Property(x => x.HourlyRate).HasPrecision(18, 2);
-        builder.HasIndex(x => x.UserId).IsUnique();
+        builder.HasIndex(x => x.Email).IsUnique();
 
-        builder.HasOne(x => x.User)
+        builder.HasOne(x => x.UserAccount)
             .WithOne(x => x.Instructor)
-            .HasForeignKey<Instructor>(x => x.UserId)
-            .OnDelete(DeleteBehavior.Cascade);
+            .HasForeignKey<Instructor>(x => x.UserAccountId)
+            .OnDelete(DeleteBehavior.SetNull);
+
     }
 }

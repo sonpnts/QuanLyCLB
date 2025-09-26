@@ -11,9 +11,11 @@ public class UserAccountConfiguration : IEntityTypeConfiguration<UserAccount>
         builder.ToTable("Users");
         builder.HasKey(x => x.Id);
         builder.HasIndex(x => x.Email).IsUnique();
-        builder.Property(x => x.FullName).HasMaxLength(200).IsRequired();
+        builder.HasIndex(x => x.Username).IsUnique();
+        builder.Property(x => x.Username).HasMaxLength(200).IsRequired();
         builder.Property(x => x.Email).HasMaxLength(200).IsRequired();
-        builder.Property(x => x.PhoneNumber).HasMaxLength(50);
         builder.Property(x => x.GoogleSubject).HasMaxLength(200);
+        builder.Property(x => x.PasswordHash).HasMaxLength(200);
+
     }
 }
