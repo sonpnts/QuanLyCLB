@@ -16,6 +16,7 @@ public class UserAccount
 
     public TimeOnly CreatedTime { get; set; } = TimeOnly.FromDateTime(DateTime.UtcNow);
 
+
     public bool IsActive { get; set; } = true;
 
     public Instructor? Instructor { get; set; }

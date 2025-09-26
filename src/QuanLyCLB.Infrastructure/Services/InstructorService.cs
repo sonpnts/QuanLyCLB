@@ -20,7 +20,8 @@ public class InstructorService : IInstructorService
     {
         var instructors = await _dbContext.Instructors
             .AsNoTracking()
-            .OrderBy(x => x.FullName)
+            .Include(x => x.User)
+            .OrderBy(x => x.User.FullName)
             .ToListAsync(cancellationToken);
 
         return instructors.Select(x => x.ToDto()).ToList();
@@ -30,6 +31,7 @@ public class InstructorService : IInstructorService
     {
         var instructor = await _dbContext.Instructors
             .AsNoTracking()
+            .Include(x => x.User)
             .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
 
         return instructor?.ToDto();
@@ -80,6 +82,7 @@ public class InstructorService : IInstructorService
 
         _dbContext.Instructors.Add(instructor);
         await _dbContext.SaveChangesAsync(cancellationToken);
+        await _dbContext.Entry(instructor).Reference(x => x.User).LoadAsync(cancellationToken);
 
         return instructor.ToDto();
     }
@@ -93,8 +96,8 @@ public class InstructorService : IInstructorService
             return null;
         }
 
-        instructor.FullName = request.FullName;
-        instructor.PhoneNumber = request.PhoneNumber;
+        instructor.User.FullName = request.FullName;
+        instructor.User.PhoneNumber = request.PhoneNumber;
         instructor.HourlyRate = request.HourlyRate;
         instructor.IsActive = request.IsActive;
 

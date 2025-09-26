@@ -20,5 +20,6 @@ public class InstructorConfiguration : IEntityTypeConfiguration<Instructor>
             .WithOne(x => x.Instructor)
             .HasForeignKey<Instructor>(x => x.UserAccountId)
             .OnDelete(DeleteBehavior.SetNull);
+
     }
 }

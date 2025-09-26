@@ -16,5 +16,6 @@ public class UserAccountConfiguration : IEntityTypeConfiguration<UserAccount>
         builder.Property(x => x.Email).HasMaxLength(200).IsRequired();
         builder.Property(x => x.GoogleSubject).HasMaxLength(200);
         builder.Property(x => x.PasswordHash).HasMaxLength(200);
+
     }
 }

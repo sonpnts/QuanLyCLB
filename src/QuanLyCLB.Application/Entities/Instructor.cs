@@ -21,7 +21,6 @@ public class Instructor
     public DateOnly CreatedDate { get; set; } = DateOnly.FromDateTime(DateTime.UtcNow);
 
     public TimeOnly CreatedTime { get; set; } = TimeOnly.FromDateTime(DateTime.UtcNow);
-
     public bool IsActive { get; set; } = true;
 
     // Navigation property thể hiện quan hệ với các thực thể khác
