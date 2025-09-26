@@ -17,6 +17,12 @@ public class PayrollPeriod
     public decimal TotalAmount { get; set; }
     public DateTime GeneratedAt { get; set; } = DateTime.UtcNow;
 
+    public DateOnly CreatedDate { get; set; } = DateOnly.FromDateTime(DateTime.UtcNow);
+
+    public TimeOnly CreatedTime { get; set; } = TimeOnly.FromDateTime(DateTime.UtcNow);
+
+    public bool IsActive { get; set; } = true;
+
     // Chi tiết lương theo từng buổi dạy
     public ICollection<PayrollDetail> Details { get; set; } = new List<PayrollDetail>();
 }
@@ -36,4 +42,10 @@ public class PayrollDetail
     // Giá trị giờ dạy và tiền công tương ứng
     public decimal Hours { get; set; }
     public decimal Amount { get; set; }
+
+    public DateOnly CreatedDate { get; set; } = DateOnly.FromDateTime(DateTime.UtcNow);
+
+    public TimeOnly CreatedTime { get; set; } = TimeOnly.FromDateTime(DateTime.UtcNow);
+
+    public bool IsActive { get; set; } = true;
 }

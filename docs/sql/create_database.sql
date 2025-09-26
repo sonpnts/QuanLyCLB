@@ -11,21 +11,48 @@ GO
 USE QuanLyCLB;
 GO
 
+-- Bảng lưu thông tin người dùng chung
+IF OBJECT_ID(N'dbo.Users', N'U') IS NULL
+BEGIN
+    CREATE TABLE dbo.Users
+    (
+        Id UNIQUEIDENTIFIER NOT NULL PRIMARY KEY,
+        Username NVARCHAR(200) NOT NULL,
+        Email NVARCHAR(200) NOT NULL,
+        GoogleSubject NVARCHAR(200) NULL,
+        PasswordHash NVARCHAR(200) NULL,
+        CreatedDate DATE NOT NULL DEFAULT CONVERT(date, SYSUTCDATETIME()),
+        CreatedTime TIME NOT NULL DEFAULT CONVERT(time, SYSUTCDATETIME()),
+        IsActive BIT NOT NULL DEFAULT 1
+    );
+
+    CREATE UNIQUE INDEX IX_Users_Email ON dbo.Users(Email);
+    CREATE UNIQUE INDEX IX_Users_Username ON dbo.Users(Username);
+END
+GO
+
 -- Bảng lưu thông tin giảng viên
 IF OBJECT_ID(N'dbo.Instructors', N'U') IS NULL
 BEGIN
     CREATE TABLE dbo.Instructors
     (
         Id UNIQUEIDENTIFIER NOT NULL PRIMARY KEY,
+        UserAccountId UNIQUEIDENTIFIER NULL,
         FullName NVARCHAR(200) NOT NULL,
         Email NVARCHAR(200) NOT NULL,
         PhoneNumber NVARCHAR(50) NULL,
         HourlyRate DECIMAL(18, 2) NOT NULL DEFAULT 0,
-        GoogleSubject NVARCHAR(200) NULL,
+        CreatedDate DATE NOT NULL DEFAULT CONVERT(date, SYSUTCDATETIME()),
+        CreatedTime TIME NOT NULL DEFAULT CONVERT(time, SYSUTCDATETIME()),
         IsActive BIT NOT NULL DEFAULT 1
     );
 
     CREATE UNIQUE INDEX IX_Instructors_Email ON dbo.Instructors(Email);
+
+    ALTER TABLE dbo.Instructors
+        ADD CONSTRAINT FK_Instructors_Users
+            FOREIGN KEY (UserAccountId) REFERENCES dbo.Users(Id)
+            ON DELETE SET NULL;
 END
 GO
 
@@ -41,7 +68,10 @@ BEGIN
         StartDate DATE NOT NULL,
         EndDate DATE NULL,
         MaxStudents INT NOT NULL,
-        InstructorId UNIQUEIDENTIFIER NOT NULL
+        InstructorId UNIQUEIDENTIFIER NOT NULL,
+        CreatedDate DATE NOT NULL DEFAULT CONVERT(date, SYSUTCDATETIME()),
+        CreatedTime TIME NOT NULL DEFAULT CONVERT(time, SYSUTCDATETIME()),
+        IsActive BIT NOT NULL DEFAULT 1
     );
 
     ALTER TABLE dbo.TrainingClasses
@@ -67,7 +97,10 @@ BEGIN
         LocationName NVARCHAR(200) NOT NULL,
         Latitude FLOAT NOT NULL,
         Longitude FLOAT NOT NULL,
-        AllowedRadiusMeters DECIMAL(18, 2) NOT NULL
+        AllowedRadiusMeters DECIMAL(18, 2) NOT NULL,
+        CreatedDate DATE NOT NULL DEFAULT CONVERT(date, SYSUTCDATETIME()),
+        CreatedTime TIME NOT NULL DEFAULT CONVERT(time, SYSUTCDATETIME()),
+        IsActive BIT NOT NULL DEFAULT 1
     );
 
     ALTER TABLE dbo.ClassSchedules
@@ -88,12 +121,14 @@ BEGIN
         Id UNIQUEIDENTIFIER NOT NULL PRIMARY KEY,
         ClassScheduleId UNIQUEIDENTIFIER NOT NULL,
         InstructorId UNIQUEIDENTIFIER NOT NULL,
-        CreatedAt DATETIME2 NOT NULL DEFAULT SYSUTCDATETIME(),
         Reason NVARCHAR(500) NOT NULL,
         CreatedBy NVARCHAR(200) NOT NULL,
         IsApproved BIT NOT NULL DEFAULT 0,
         ApprovedBy NVARCHAR(200) NULL,
-        ApprovedAt DATETIME2 NULL
+        ApprovedAt DATETIME2 NULL,
+        CreatedDate DATE NOT NULL DEFAULT CONVERT(date, SYSUTCDATETIME()),
+        CreatedTime TIME NOT NULL DEFAULT CONVERT(time, SYSUTCDATETIME()),
+        IsActive BIT NOT NULL DEFAULT 1
     );
 
     ALTER TABLE dbo.AttendanceTickets
@@ -121,7 +156,10 @@ BEGIN
         Longitude FLOAT NOT NULL,
         Status INT NOT NULL DEFAULT 0,
         Notes NVARCHAR(500) NULL,
-        TicketId UNIQUEIDENTIFIER NULL
+        TicketId UNIQUEIDENTIFIER NULL,
+        CreatedDate DATE NOT NULL DEFAULT CONVERT(date, SYSUTCDATETIME()),
+        CreatedTime TIME NOT NULL DEFAULT CONVERT(time, SYSUTCDATETIME()),
+        IsActive BIT NOT NULL DEFAULT 1
     );
 
     ALTER TABLE dbo.AttendanceRecords
@@ -156,7 +194,10 @@ BEGIN
         [Month] INT NOT NULL,
         TotalHours DECIMAL(18, 2) NOT NULL DEFAULT 0,
         TotalAmount DECIMAL(18, 2) NOT NULL DEFAULT 0,
-        GeneratedAt DATETIME2 NOT NULL DEFAULT SYSUTCDATETIME()
+        GeneratedAt DATETIME2 NOT NULL DEFAULT SYSUTCDATETIME(),
+        CreatedDate DATE NOT NULL DEFAULT CONVERT(date, SYSUTCDATETIME()),
+        CreatedTime TIME NOT NULL DEFAULT CONVERT(time, SYSUTCDATETIME()),
+        IsActive BIT NOT NULL DEFAULT 1
     );
 
     ALTER TABLE dbo.PayrollPeriods
@@ -177,7 +218,10 @@ BEGIN
         PayrollPeriodId UNIQUEIDENTIFIER NOT NULL,
         AttendanceRecordId UNIQUEIDENTIFIER NOT NULL,
         Hours DECIMAL(18, 2) NOT NULL,
-        Amount DECIMAL(18, 2) NOT NULL
+        Amount DECIMAL(18, 2) NOT NULL,
+        CreatedDate DATE NOT NULL DEFAULT CONVERT(date, SYSUTCDATETIME()),
+        CreatedTime TIME NOT NULL DEFAULT CONVERT(time, SYSUTCDATETIME()),
+        IsActive BIT NOT NULL DEFAULT 1
     );
 
     ALTER TABLE dbo.PayrollDetails

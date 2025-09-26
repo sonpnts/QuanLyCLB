@@ -19,6 +19,12 @@ public class AttendanceRecord
     public double Latitude { get; set; }
     public double Longitude { get; set; }
 
+    public DateOnly CreatedDate { get; set; } = DateOnly.FromDateTime(DateTime.UtcNow);
+
+    public TimeOnly CreatedTime { get; set; } = TimeOnly.FromDateTime(DateTime.UtcNow);
+
+    public bool IsActive { get; set; } = true;
+
     // Trạng thái và ghi chú xử lý điểm danh
     public AttendanceStatus Status { get; set; }
     public string Notes { get; set; } = string.Empty;

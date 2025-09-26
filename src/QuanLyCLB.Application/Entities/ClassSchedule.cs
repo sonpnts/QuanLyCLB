@@ -24,6 +24,12 @@ public class ClassSchedule
     public double Longitude { get; set; }
     public double AllowedRadiusMeters { get; set; }
 
+    public DateOnly CreatedDate { get; set; } = DateOnly.FromDateTime(DateTime.UtcNow);
+
+    public TimeOnly CreatedTime { get; set; } = TimeOnly.FromDateTime(DateTime.UtcNow);
+
+    public bool IsActive { get; set; } = true;
+
     // Danh sách bản ghi điểm danh của buổi học
     public ICollection<AttendanceRecord> AttendanceRecords { get; set; } = new List<AttendanceRecord>();
 }
