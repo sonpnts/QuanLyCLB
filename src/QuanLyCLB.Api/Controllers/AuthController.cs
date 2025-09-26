@@ -42,7 +42,15 @@ public class AuthController : ControllerBase
             return Unauthorized();
         }
 
-        var instructor = await _instructorService.SyncGoogleAccountAsync(googleUser.Email, googleUser.Name, googleUser.Subject, cancellationToken);
+        InstructorDto instructor;
+        try
+        {
+            instructor = await _instructorService.SyncGoogleAccountAsync(googleUser.Email, googleUser.Name, googleUser.Subject, cancellationToken);
+        }
+        catch (InvalidOperationException ex)
+        {
+            return Unauthorized(new { message = ex.Message });
+        }
         var roles = ResolveRoles(googleUser.Email);
 
         var claims = new List<Claim>

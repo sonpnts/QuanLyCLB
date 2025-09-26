@@ -8,12 +8,12 @@ public class Instructor
     // Khóa chính dạng GUID để đảm bảo dữ liệu đồng nhất giữa các tầng
     public Guid Id { get; set; } = Guid.NewGuid();
 
-    // Thông tin cơ bản của giảng viên
-    public string FullName { get; set; } = string.Empty;
-    public string Email { get; set; } = string.Empty;
-    public string PhoneNumber { get; set; } = string.Empty;
+    public Guid UserId { get; set; }
+
+    public UserAccount User { get; set; } = null!;
+
     public decimal HourlyRate { get; set; }
-    public string? GoogleSubject { get; set; }
+
     public bool IsActive { get; set; } = true;
 
     // Navigation property thể hiện quan hệ với các thực thể khác
