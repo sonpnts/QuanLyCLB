@@ -11,21 +11,40 @@ GO
 USE QuanLyCLB;
 GO
 
+-- Bảng lưu thông tin người dùng chung
+IF OBJECT_ID(N'dbo.Users', N'U') IS NULL
+BEGIN
+    CREATE TABLE dbo.Users
+    (
+        Id UNIQUEIDENTIFIER NOT NULL PRIMARY KEY,
+        FullName NVARCHAR(200) NOT NULL,
+        Email NVARCHAR(200) NOT NULL,
+        PhoneNumber NVARCHAR(50) NULL,
+        GoogleSubject NVARCHAR(200) NULL,
+        IsActive BIT NOT NULL DEFAULT 1
+    );
+
+    CREATE UNIQUE INDEX IX_Users_Email ON dbo.Users(Email);
+END
+GO
+
 -- Bảng lưu thông tin giảng viên
 IF OBJECT_ID(N'dbo.Instructors', N'U') IS NULL
 BEGIN
     CREATE TABLE dbo.Instructors
     (
         Id UNIQUEIDENTIFIER NOT NULL PRIMARY KEY,
-        FullName NVARCHAR(200) NOT NULL,
-        Email NVARCHAR(200) NOT NULL,
-        PhoneNumber NVARCHAR(50) NULL,
+        UserId UNIQUEIDENTIFIER NOT NULL,
         HourlyRate DECIMAL(18, 2) NOT NULL DEFAULT 0,
-        GoogleSubject NVARCHAR(200) NULL,
         IsActive BIT NOT NULL DEFAULT 1
     );
 
-    CREATE UNIQUE INDEX IX_Instructors_Email ON dbo.Instructors(Email);
+    CREATE UNIQUE INDEX IX_Instructors_UserId ON dbo.Instructors(UserId);
+
+    ALTER TABLE dbo.Instructors
+        ADD CONSTRAINT FK_Instructors_Users
+            FOREIGN KEY (UserId) REFERENCES dbo.Users(Id)
+            ON DELETE CASCADE;
 END
 GO
 

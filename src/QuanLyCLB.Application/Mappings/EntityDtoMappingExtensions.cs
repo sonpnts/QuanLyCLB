@@ -7,9 +7,9 @@ public static class EntityDtoMappingExtensions
 {
     public static InstructorDto ToDto(this Instructor entity) => new(
         entity.Id,
-        entity.FullName,
-        entity.Email,
-        entity.PhoneNumber,
+        entity.User.FullName,
+        entity.User.Email,
+        entity.User.PhoneNumber,
         entity.HourlyRate,
         entity.IsActive);
 
