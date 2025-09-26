@@ -22,7 +22,7 @@ public class AttendanceRecordConfiguration : IEntityTypeConfiguration<Attendance
         builder.HasOne(x => x.ClassSchedule)
             .WithMany(s => s.AttendanceRecords)
             .HasForeignKey(x => x.ClassScheduleId)
-            .OnDelete(DeleteBehavior.Cascade);
+            .OnDelete(DeleteBehavior.Restrict);
 
         builder.HasOne(x => x.Instructor)
             .WithMany(i => i.AttendanceRecords)
