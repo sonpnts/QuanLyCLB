@@ -12,7 +12,7 @@ using QuanLyCLB.Infrastructure.Persistence;
 namespace QuanLyCLB.Infrastructure.Migrations
 {
     [DbContext(typeof(ClubManagementDbContext))]
-    [Migration("20250926043542_InitialCreate")]
+    [Migration("20241010000000_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -37,11 +37,18 @@ namespace QuanLyCLB.Infrastructure.Migrations
                     b.Property<Guid>("ClassScheduleId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateOnly>("CreatedDate")
-                        .HasColumnType("date");
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("SYSUTCDATETIME()");
 
-                    b.Property<TimeOnly>("CreatedTime")
-                        .HasColumnType("time");
+                    b.Property<Guid?>("CreatedByUserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("UpdatedByUserId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("InstructorId")
                         .HasColumnType("uniqueidentifier");
@@ -97,16 +104,17 @@ namespace QuanLyCLB.Infrastructure.Migrations
                     b.Property<Guid>("ClassScheduleId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateOnly>("CreatedDate")
-                        .HasColumnType("date");
-
-                    b.Property<TimeOnly>("CreatedTime")
-                        .HasColumnType("time");
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("SYSUTCDATETIME()");
 
                     b.Property<string>("CreatedBy")
                         .IsRequired()
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
+
+                    b.Property<Guid?>("CreatedByUserId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("InstructorId")
                         .HasColumnType("uniqueidentifier");
@@ -121,6 +129,12 @@ namespace QuanLyCLB.Infrastructure.Migrations
                         .IsRequired()
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("UpdatedByUserId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
@@ -140,11 +154,12 @@ namespace QuanLyCLB.Infrastructure.Migrations
                     b.Property<double>("AllowedRadiusMeters")
                         .HasColumnType("float");
 
-                    b.Property<DateOnly>("CreatedDate")
-                        .HasColumnType("date");
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("SYSUTCDATETIME()");
 
-                    b.Property<TimeOnly>("CreatedTime")
-                        .HasColumnType("time");
+                    b.Property<Guid?>("CreatedByUserId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("DayOfWeek")
                         .HasColumnType("int");
@@ -165,6 +180,12 @@ namespace QuanLyCLB.Infrastructure.Migrations
 
                     b.Property<double>("Longitude")
                         .HasColumnType("float");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("UpdatedByUserId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<TimeOnly>("StartTime")
                         .HasColumnType("time");
@@ -189,11 +210,9 @@ namespace QuanLyCLB.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateOnly>("CreatedDate")
-                        .HasColumnType("date");
-
-                    b.Property<TimeOnly>("CreatedTime")
-                        .HasColumnType("time");
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("SYSUTCDATETIME()");
 
                     b.Property<decimal>("HourlyRate")
                         .HasPrecision(18, 2)
@@ -203,6 +222,15 @@ namespace QuanLyCLB.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bit")
                         .HasDefaultValue(true);
+
+                    b.Property<Guid?>("CreatedByUserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("UpdatedByUserId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("UserAccountId")
                         .HasColumnType("uniqueidentifier");
@@ -228,11 +256,9 @@ namespace QuanLyCLB.Infrastructure.Migrations
                     b.Property<Guid>("AttendanceRecordId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateOnly>("CreatedDate")
-                        .HasColumnType("date");
-
-                    b.Property<TimeOnly>("CreatedTime")
-                        .HasColumnType("time");
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("SYSUTCDATETIME()");
 
                     b.Property<decimal>("Hours")
                         .HasPrecision(18, 2)
@@ -240,6 +266,15 @@ namespace QuanLyCLB.Infrastructure.Migrations
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
+
+                    b.Property<Guid?>("CreatedByUserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("UpdatedByUserId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("PayrollPeriodId")
                         .HasColumnType("uniqueidentifier");
@@ -259,11 +294,9 @@ namespace QuanLyCLB.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateOnly>("CreatedDate")
-                        .HasColumnType("date");
-
-                    b.Property<TimeOnly>("CreatedTime")
-                        .HasColumnType("time");
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("SYSUTCDATETIME()");
 
                     b.Property<DateTime>("GeneratedAt")
                         .HasColumnType("datetime2");
@@ -273,6 +306,15 @@ namespace QuanLyCLB.Infrastructure.Migrations
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
+
+                    b.Property<Guid?>("CreatedByUserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("UpdatedByUserId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("Month")
                         .HasColumnType("int");
@@ -311,6 +353,19 @@ namespace QuanLyCLB.Infrastructure.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("SYSUTCDATETIME()");
+
+                    b.Property<Guid?>("CreatedByUserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("UpdatedByUserId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.HasKey("Id");
 
                     b.HasIndex("Name")
@@ -330,11 +385,9 @@ namespace QuanLyCLB.Infrastructure.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.Property<DateOnly>("CreatedDate")
-                        .HasColumnType("date");
-
-                    b.Property<TimeOnly>("CreatedTime")
-                        .HasColumnType("time");
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("SYSUTCDATETIME()");
 
                     b.Property<string>("Description")
                         .IsRequired()
@@ -350,6 +403,9 @@ namespace QuanLyCLB.Infrastructure.Migrations
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
+                    b.Property<Guid?>("CreatedByUserId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<int>("MaxStudents")
                         .HasColumnType("int");
 
@@ -360,6 +416,12 @@ namespace QuanLyCLB.Infrastructure.Migrations
 
                     b.Property<DateOnly>("StartDate")
                         .HasColumnType("date");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("UpdatedByUserId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
@@ -377,11 +439,9 @@ namespace QuanLyCLB.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateOnly>("CreatedDate")
-                        .HasColumnType("date");
-
-                    b.Property<TimeOnly>("CreatedTime")
-                        .HasColumnType("time");
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("SYSUTCDATETIME()");
 
                     b.Property<string>("Email")
                         .IsRequired()
@@ -402,6 +462,9 @@ namespace QuanLyCLB.Infrastructure.Migrations
                         .HasColumnType("bit")
                         .HasDefaultValue(true);
 
+                    b.Property<Guid?>("CreatedByUserId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("PasswordHash")
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
@@ -410,6 +473,12 @@ namespace QuanLyCLB.Infrastructure.Migrations
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("UpdatedByUserId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Username")
                         .IsRequired()
@@ -433,6 +502,19 @@ namespace QuanLyCLB.Infrastructure.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("RoleId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("SYSUTCDATETIME()");
+
+                    b.Property<Guid?>("CreatedByUserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("UpdatedByUserId")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("UserAccountId", "RoleId");

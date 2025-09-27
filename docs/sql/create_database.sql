@@ -21,8 +21,10 @@ BEGIN
         Email NVARCHAR(200) NOT NULL,
         GoogleSubject NVARCHAR(200) NULL,
         PasswordHash NVARCHAR(200) NULL,
-        CreatedDate DATE NOT NULL DEFAULT CONVERT(date, SYSUTCDATETIME()),
-        CreatedTime TIME NOT NULL DEFAULT CONVERT(time, SYSUTCDATETIME()),
+        CreatedAt DATETIME2 NOT NULL DEFAULT SYSUTCDATETIME(),
+        UpdatedAt DATETIME2 NULL,
+        CreatedByUserId UNIQUEIDENTIFIER NULL,
+        UpdatedByUserId UNIQUEIDENTIFIER NULL,
         IsActive BIT NOT NULL DEFAULT 1
     );
 
@@ -42,8 +44,10 @@ BEGIN
         Email NVARCHAR(200) NOT NULL,
         PhoneNumber NVARCHAR(50) NULL,
         HourlyRate DECIMAL(18, 2) NOT NULL DEFAULT 0,
-        CreatedDate DATE NOT NULL DEFAULT CONVERT(date, SYSUTCDATETIME()),
-        CreatedTime TIME NOT NULL DEFAULT CONVERT(time, SYSUTCDATETIME()),
+        CreatedAt DATETIME2 NOT NULL DEFAULT SYSUTCDATETIME(),
+        UpdatedAt DATETIME2 NULL,
+        CreatedByUserId UNIQUEIDENTIFIER NULL,
+        UpdatedByUserId UNIQUEIDENTIFIER NULL,
         IsActive BIT NOT NULL DEFAULT 1
     );
 
@@ -69,8 +73,10 @@ BEGIN
         EndDate DATE NULL,
         MaxStudents INT NOT NULL,
         InstructorId UNIQUEIDENTIFIER NOT NULL,
-        CreatedDate DATE NOT NULL DEFAULT CONVERT(date, SYSUTCDATETIME()),
-        CreatedTime TIME NOT NULL DEFAULT CONVERT(time, SYSUTCDATETIME()),
+        CreatedAt DATETIME2 NOT NULL DEFAULT SYSUTCDATETIME(),
+        UpdatedAt DATETIME2 NULL,
+        CreatedByUserId UNIQUEIDENTIFIER NULL,
+        UpdatedByUserId UNIQUEIDENTIFIER NULL,
         IsActive BIT NOT NULL DEFAULT 1
     );
 
@@ -98,8 +104,10 @@ BEGIN
         Latitude FLOAT NOT NULL,
         Longitude FLOAT NOT NULL,
         AllowedRadiusMeters DECIMAL(18, 2) NOT NULL,
-        CreatedDate DATE NOT NULL DEFAULT CONVERT(date, SYSUTCDATETIME()),
-        CreatedTime TIME NOT NULL DEFAULT CONVERT(time, SYSUTCDATETIME()),
+        CreatedAt DATETIME2 NOT NULL DEFAULT SYSUTCDATETIME(),
+        UpdatedAt DATETIME2 NULL,
+        CreatedByUserId UNIQUEIDENTIFIER NULL,
+        UpdatedByUserId UNIQUEIDENTIFIER NULL,
         IsActive BIT NOT NULL DEFAULT 1
     );
 
@@ -126,8 +134,10 @@ BEGIN
         IsApproved BIT NOT NULL DEFAULT 0,
         ApprovedBy NVARCHAR(200) NULL,
         ApprovedAt DATETIME2 NULL,
-        CreatedDate DATE NOT NULL DEFAULT CONVERT(date, SYSUTCDATETIME()),
-        CreatedTime TIME NOT NULL DEFAULT CONVERT(time, SYSUTCDATETIME()),
+        CreatedAt DATETIME2 NOT NULL DEFAULT SYSUTCDATETIME(),
+        UpdatedAt DATETIME2 NULL,
+        CreatedByUserId UNIQUEIDENTIFIER NULL,
+        UpdatedByUserId UNIQUEIDENTIFIER NULL,
         IsActive BIT NOT NULL DEFAULT 1
     );
 
@@ -157,8 +167,10 @@ BEGIN
         Status INT NOT NULL DEFAULT 0,
         Notes NVARCHAR(500) NULL,
         TicketId UNIQUEIDENTIFIER NULL,
-        CreatedDate DATE NOT NULL DEFAULT CONVERT(date, SYSUTCDATETIME()),
-        CreatedTime TIME NOT NULL DEFAULT CONVERT(time, SYSUTCDATETIME()),
+        CreatedAt DATETIME2 NOT NULL DEFAULT SYSUTCDATETIME(),
+        UpdatedAt DATETIME2 NULL,
+        CreatedByUserId UNIQUEIDENTIFIER NULL,
+        UpdatedByUserId UNIQUEIDENTIFIER NULL,
         IsActive BIT NOT NULL DEFAULT 1
     );
 
@@ -195,8 +207,10 @@ BEGIN
         TotalHours DECIMAL(18, 2) NOT NULL DEFAULT 0,
         TotalAmount DECIMAL(18, 2) NOT NULL DEFAULT 0,
         GeneratedAt DATETIME2 NOT NULL DEFAULT SYSUTCDATETIME(),
-        CreatedDate DATE NOT NULL DEFAULT CONVERT(date, SYSUTCDATETIME()),
-        CreatedTime TIME NOT NULL DEFAULT CONVERT(time, SYSUTCDATETIME()),
+        CreatedAt DATETIME2 NOT NULL DEFAULT SYSUTCDATETIME(),
+        UpdatedAt DATETIME2 NULL,
+        CreatedByUserId UNIQUEIDENTIFIER NULL,
+        UpdatedByUserId UNIQUEIDENTIFIER NULL,
         IsActive BIT NOT NULL DEFAULT 1
     );
 
@@ -219,8 +233,10 @@ BEGIN
         AttendanceRecordId UNIQUEIDENTIFIER NOT NULL,
         Hours DECIMAL(18, 2) NOT NULL,
         Amount DECIMAL(18, 2) NOT NULL,
-        CreatedDate DATE NOT NULL DEFAULT CONVERT(date, SYSUTCDATETIME()),
-        CreatedTime TIME NOT NULL DEFAULT CONVERT(time, SYSUTCDATETIME()),
+        CreatedAt DATETIME2 NOT NULL DEFAULT SYSUTCDATETIME(),
+        UpdatedAt DATETIME2 NULL,
+        CreatedByUserId UNIQUEIDENTIFIER NULL,
+        UpdatedByUserId UNIQUEIDENTIFIER NULL,
         IsActive BIT NOT NULL DEFAULT 1
     );
 

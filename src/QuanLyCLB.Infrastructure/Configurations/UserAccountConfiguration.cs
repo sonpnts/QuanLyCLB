@@ -18,8 +18,6 @@ public class UserAccountConfiguration : IEntityTypeConfiguration<UserAccount>
         builder.Property(x => x.PhoneNumber).HasMaxLength(50);
         builder.Property(x => x.GoogleSubject).HasMaxLength(200);
         builder.Property(x => x.PasswordHash).HasMaxLength(200);
-        builder.Property(x => x.CreatedDate).HasColumnType("date");
-        builder.Property(x => x.CreatedTime).HasColumnType("time");
         builder.Property(x => x.IsActive).HasDefaultValue(true);
 
         builder.HasMany(x => x.UserRoles)

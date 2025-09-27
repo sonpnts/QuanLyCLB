@@ -1,3 +1,4 @@
+using System;
 using Microsoft.EntityFrameworkCore;
 using QuanLyCLB.Application.DTOs;
 using QuanLyCLB.Application.Entities;
@@ -44,7 +45,8 @@ public class AttendanceService : IAttendanceService
             CheckedInAt = request.CheckedInAt,
             Latitude = request.Latitude,
             Longitude = request.Longitude,
-            Status = status
+            Status = status,
+            CreatedByUserId = request.InstructorId
         };
 
         _dbContext.AttendanceRecords.Add(record);
@@ -117,6 +119,7 @@ public class AttendanceService : IAttendanceService
             InstructorId = request.InstructorId,
             Reason = request.Reason,
             CreatedBy = request.CreatedBy,
+            CreatedByUserId = request.CreatedByUserId,
             IsApproved = false
         };
 
@@ -136,6 +139,8 @@ public class AttendanceService : IAttendanceService
         ticket.IsApproved = request.Approve;
         ticket.ApprovedBy = request.Approver;
         ticket.ApprovedAt = DateTime.UtcNow;
+        ticket.UpdatedAt = ticket.ApprovedAt;
+        ticket.UpdatedByUserId = request.UpdatedByUserId;
 
         if (!string.IsNullOrWhiteSpace(request.Notes))
         {
@@ -143,6 +148,8 @@ public class AttendanceService : IAttendanceService
             if (attendance is not null)
             {
                 attendance.Notes = request.Notes;
+                attendance.UpdatedAt = DateTime.UtcNow;
+                attendance.UpdatedByUserId = request.UpdatedByUserId;
             }
         }
 

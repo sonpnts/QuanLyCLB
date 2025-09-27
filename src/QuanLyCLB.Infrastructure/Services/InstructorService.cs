@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using QuanLyCLB.Application.DTOs;
@@ -106,6 +107,8 @@ public class InstructorService : IInstructorService
         instructor.HourlyRate = request.HourlyRate;
         instructor.IsActive = request.IsActive;
         instructor.User.IsActive = request.IsActive;
+        instructor.UpdatedAt = DateTime.UtcNow;
+        instructor.User.UpdatedAt = DateTime.UtcNow;
 
         await _dbContext.SaveChangesAsync(cancellationToken);
 

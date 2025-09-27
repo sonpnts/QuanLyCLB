@@ -50,12 +50,15 @@ public static class EntityDtoMappingExtensions
         entity.Id,
         entity.ClassScheduleId,
         entity.InstructorId,
-        entity.CreatedDate.ToDateTime(entity.CreatedTime),
+        entity.CreatedAt,
         entity.Reason,
         entity.CreatedBy,
         entity.IsApproved,
         entity.ApprovedBy,
-        entity.ApprovedAt);
+        entity.ApprovedAt,
+        entity.CreatedByUserId,
+        entity.UpdatedAt,
+        entity.UpdatedByUserId);
 
     public static PayrollPeriodDto ToDto(this PayrollPeriod entity) => new(
         entity.Id,

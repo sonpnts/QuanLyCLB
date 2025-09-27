@@ -1,3 +1,4 @@
+using System;
 using Microsoft.EntityFrameworkCore;
 using QuanLyCLB.Application.DTOs;
 using QuanLyCLB.Application.Entities;
@@ -111,6 +112,7 @@ public class ScheduleService : IScheduleService
         entity.Latitude = request.Latitude;
         entity.Longitude = request.Longitude;
         entity.AllowedRadiusMeters = request.AllowedRadiusMeters;
+        entity.UpdatedAt = DateTime.UtcNow;
 
         await _dbContext.SaveChangesAsync(cancellationToken);
         return entity.ToDto();

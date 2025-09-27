@@ -3,7 +3,7 @@ namespace QuanLyCLB.Application.Entities;
 /// <summary>
 /// Thực thể Phiếu hỗ trợ điểm danh giúp quản lý yêu cầu điều chỉnh.
 /// </summary>
-public class AttendanceTicket
+public class AttendanceTicket : AuditableEntity
 {
     // Thông tin khóa chính và liên kết đến buổi học/giảng viên
     public Guid Id { get; set; } = Guid.NewGuid();
@@ -11,10 +11,6 @@ public class AttendanceTicket
     public ClassSchedule? ClassSchedule { get; set; }
     public Guid InstructorId { get; set; }
     public Instructor? Instructor { get; set; }
-
-    public DateOnly CreatedDate { get; set; } = DateOnly.FromDateTime(DateTime.UtcNow);
-
-    public TimeOnly CreatedTime { get; set; } = TimeOnly.FromDateTime(DateTime.UtcNow);
 
     public bool IsActive { get; set; } = true;
 
