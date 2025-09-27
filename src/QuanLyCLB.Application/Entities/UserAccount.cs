@@ -8,6 +8,10 @@ public class UserAccount
 
     public string Email { get; set; } = string.Empty;
 
+    public string FullName { get; set; } = string.Empty;
+
+    public string PhoneNumber { get; set; } = string.Empty;
+
     public string? GoogleSubject { get; set; }
 
     public string? PasswordHash { get; set; }
@@ -20,4 +24,6 @@ public class UserAccount
     public bool IsActive { get; set; } = true;
 
     public Instructor? Instructor { get; set; }
+
+    public ICollection<UserRole> UserRoles { get; set; } = new List<UserRole>();
 }

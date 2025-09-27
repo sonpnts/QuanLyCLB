@@ -16,6 +16,8 @@ public class ClubManagementDbContext : DbContext
 
     // Khai báo các DbSet tương ứng với từng bảng trong cơ sở dữ liệu
     public DbSet<UserAccount> Users => Set<UserAccount>();
+    public DbSet<Role> Roles => Set<Role>();
+    public DbSet<UserRole> UserRoles => Set<UserRole>();
     public DbSet<Instructor> Instructors => Set<Instructor>();
     public DbSet<TrainingClass> TrainingClasses => Set<TrainingClass>();
     public DbSet<ClassSchedule> ClassSchedules => Set<ClassSchedule>();

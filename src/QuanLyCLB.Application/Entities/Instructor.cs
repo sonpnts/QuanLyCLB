@@ -8,14 +8,11 @@ public class Instructor
     // Khóa chính dạng GUID để đảm bảo dữ liệu đồng nhất giữa các tầng
     public Guid Id { get; set; } = Guid.NewGuid();
 
-    public Guid? UserAccountId { get; set; }
+    public Guid UserAccountId { get; set; }
 
-    public UserAccount? UserAccount { get; set; }
+    public UserAccount User { get; set; } = null!;
 
     // Thông tin cơ bản của giảng viên
-    public string FullName { get; set; } = string.Empty;
-    public string Email { get; set; } = string.Empty;
-    public string PhoneNumber { get; set; } = string.Empty;
     public decimal HourlyRate { get; set; }
 
     public DateOnly CreatedDate { get; set; } = DateOnly.FromDateTime(DateTime.UtcNow);

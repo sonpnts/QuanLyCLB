@@ -16,20 +16,17 @@ public class AuthController : ControllerBase
     private readonly IInstructorService _instructorService;
     private readonly IJwtTokenService _jwtTokenService;
     private readonly JwtSettings _jwtSettings;
-    private readonly IConfiguration _configuration;
 
     public AuthController(
         IGoogleTokenValidator tokenValidator,
         IInstructorService instructorService,
         IJwtTokenService jwtTokenService,
-        IOptions<JwtSettings> jwtOptions,
-        IConfiguration configuration)
+        IOptions<JwtSettings> jwtOptions)
     {
         _tokenValidator = tokenValidator;
         _instructorService = instructorService;
         _jwtTokenService = jwtTokenService;
         _jwtSettings = jwtOptions.Value;
-        _configuration = configuration;
     }
 
     [AllowAnonymous]
@@ -42,16 +39,17 @@ public class AuthController : ControllerBase
             return Unauthorized();
         }
 
-        InstructorDto instructor;
+        InstructorAuthResult instructorResult;
         try
         {
-            instructor = await _instructorService.SyncGoogleAccountAsync(googleUser.Email, googleUser.Name, googleUser.Subject, cancellationToken);
+            instructorResult = await _instructorService.SyncGoogleAccountAsync(googleUser.Email, googleUser.Name, googleUser.Subject, cancellationToken);
         }
         catch (InvalidOperationException ex)
         {
             return Unauthorized(new { message = ex.Message });
         }
-        var roles = ResolveRoles(googleUser.Email);
+        var instructor = instructorResult.Instructor;
+        var roles = instructorResult.Roles;
 
         var claims = new List<Claim>
         {
@@ -68,14 +66,6 @@ public class AuthController : ControllerBase
         var expiresAt = DateTime.UtcNow.AddDays(_jwtSettings.ExpirationDays);
         var token = _jwtTokenService.CreateToken(claims, expiresAt);
 
-        return Ok(new AuthResponse(token, expiresAt, instructor));
-    }
-
-    private IReadOnlyCollection<string> ResolveRoles(string email)
-    {
-        var adminEmails = _configuration.GetSection("Authorization:Admins").Get<string[]>() ?? Array.Empty<string>();
-        return adminEmails.Contains(email, StringComparer.OrdinalIgnoreCase)
-            ? new[] { "Admin", "Instructor" }
-            : new[] { "Instructor" };
+        return Ok(new AuthResponse(token, expiresAt, instructor, roles));
     }
 }
