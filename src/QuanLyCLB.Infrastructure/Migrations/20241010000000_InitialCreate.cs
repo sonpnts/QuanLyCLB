@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
@@ -17,7 +17,11 @@ namespace QuanLyCLB.Infrastructure.Migrations
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(250)", maxLength: 250, nullable: true)
+                    Description = table.Column<string>(type: "nvarchar(250)", maxLength: 250, nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "SYSUTCDATETIME()"),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    CreatedByUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    UpdatedByUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -35,9 +39,11 @@ namespace QuanLyCLB.Infrastructure.Migrations
                     PhoneNumber = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     GoogleSubject = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: true),
                     PasswordHash = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: true),
-                    CreatedDate = table.Column<DateOnly>(type: "date", nullable: false),
-                    CreatedTime = table.Column<TimeOnly>(type: "time", nullable: false),
-                    IsActive = table.Column<bool>(type: "bit", nullable: false)
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "SYSUTCDATETIME()"),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    CreatedByUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    UpdatedByUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -51,9 +57,11 @@ namespace QuanLyCLB.Infrastructure.Migrations
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     UserAccountId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     HourlyRate = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
-                    CreatedDate = table.Column<DateOnly>(type: "date", nullable: false),
-                    CreatedTime = table.Column<TimeOnly>(type: "time", nullable: false),
-                    IsActive = table.Column<bool>(type: "bit", nullable: false)
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "SYSUTCDATETIME()"),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    CreatedByUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    UpdatedByUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -71,7 +79,11 @@ namespace QuanLyCLB.Infrastructure.Migrations
                 columns: table => new
                 {
                     UserAccountId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    RoleId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                    RoleId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "SYSUTCDATETIME()"),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    CreatedByUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    UpdatedByUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -102,9 +114,11 @@ namespace QuanLyCLB.Infrastructure.Migrations
                     EndDate = table.Column<DateOnly>(type: "date", nullable: true),
                     MaxStudents = table.Column<int>(type: "int", nullable: false),
                     InstructorId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    CreatedDate = table.Column<DateOnly>(type: "date", nullable: false),
-                    CreatedTime = table.Column<TimeOnly>(type: "time", nullable: false),
-                    IsActive = table.Column<bool>(type: "bit", nullable: false)
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "SYSUTCDATETIME()"),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    CreatedByUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    UpdatedByUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -131,9 +145,11 @@ namespace QuanLyCLB.Infrastructure.Migrations
                     Latitude = table.Column<double>(type: "float", nullable: false),
                     Longitude = table.Column<double>(type: "float", nullable: false),
                     AllowedRadiusMeters = table.Column<double>(type: "float", nullable: false),
-                    CreatedDate = table.Column<DateOnly>(type: "date", nullable: false),
-                    CreatedTime = table.Column<TimeOnly>(type: "time", nullable: false),
-                    IsActive = table.Column<bool>(type: "bit", nullable: false)
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "SYSUTCDATETIME()"),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    CreatedByUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    UpdatedByUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -153,14 +169,16 @@ namespace QuanLyCLB.Infrastructure.Migrations
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     ClassScheduleId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     InstructorId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    CreatedDate = table.Column<DateOnly>(type: "date", nullable: false),
-                    CreatedTime = table.Column<TimeOnly>(type: "time", nullable: false),
-                    IsActive = table.Column<bool>(type: "bit", nullable: false),
                     Reason = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
                     CreatedBy = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
                     IsApproved = table.Column<bool>(type: "bit", nullable: false),
                     ApprovedBy = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: true),
-                    ApprovedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    ApprovedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "SYSUTCDATETIME()"),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    CreatedByUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    UpdatedByUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -190,9 +208,11 @@ namespace QuanLyCLB.Infrastructure.Migrations
                     TotalHours = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
                     TotalAmount = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
                     GeneratedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    CreatedDate = table.Column<DateOnly>(type: "date", nullable: false),
-                    CreatedTime = table.Column<TimeOnly>(type: "time", nullable: false),
-                    IsActive = table.Column<bool>(type: "bit", nullable: false)
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "SYSUTCDATETIME()"),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    CreatedByUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    UpdatedByUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -215,12 +235,14 @@ namespace QuanLyCLB.Infrastructure.Migrations
                     CheckedInAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Latitude = table.Column<double>(type: "float", nullable: false),
                     Longitude = table.Column<double>(type: "float", nullable: false),
-                    CreatedDate = table.Column<DateOnly>(type: "date", nullable: false),
-                    CreatedTime = table.Column<TimeOnly>(type: "time", nullable: false),
-                    IsActive = table.Column<bool>(type: "bit", nullable: false),
                     Status = table.Column<int>(type: "int", nullable: false, defaultValue: 0),
                     Notes = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
-                    TicketId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                    TicketId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "SYSUTCDATETIME()"),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    CreatedByUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    UpdatedByUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -254,9 +276,11 @@ namespace QuanLyCLB.Infrastructure.Migrations
                     AttendanceRecordId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Hours = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
                     Amount = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
-                    CreatedDate = table.Column<DateOnly>(type: "date", nullable: false),
-                    CreatedTime = table.Column<TimeOnly>(type: "time", nullable: false),
-                    IsActive = table.Column<bool>(type: "bit", nullable: false)
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "SYSUTCDATETIME()"),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    CreatedByUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    UpdatedByUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -331,6 +355,12 @@ namespace QuanLyCLB.Infrastructure.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_Roles_Name",
+                table: "Roles",
+                column: "Name",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_TrainingClasses_Code",
                 table: "TrainingClasses",
                 column: "Code",
@@ -356,12 +386,6 @@ namespace QuanLyCLB.Infrastructure.Migrations
                 name: "IX_Users_Username",
                 table: "Users",
                 column: "Username",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Roles_Name",
-                table: "Roles",
-                column: "Name",
                 unique: true);
         }
 

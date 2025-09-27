@@ -5,7 +5,7 @@ namespace QuanLyCLB.Application.Entities;
 /// <summary>
 /// Thực thể Lịch học cho biết một buổi học cụ thể của lớp đào tạo.
 /// </summary>
-public class ClassSchedule
+public class ClassSchedule : AuditableEntity
 {
     // Khóa chính và liên kết về lớp đào tạo
     public Guid Id { get; set; } = Guid.NewGuid();
@@ -23,10 +23,6 @@ public class ClassSchedule
     public double Latitude { get; set; }
     public double Longitude { get; set; }
     public double AllowedRadiusMeters { get; set; }
-
-    public DateOnly CreatedDate { get; set; } = DateOnly.FromDateTime(DateTime.UtcNow);
-
-    public TimeOnly CreatedTime { get; set; } = TimeOnly.FromDateTime(DateTime.UtcNow);
 
     public bool IsActive { get; set; } = true;
 

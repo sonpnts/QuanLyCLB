@@ -5,7 +5,7 @@ namespace QuanLyCLB.Application.Entities;
 /// <summary>
 /// Thực thể ghi nhận thông tin điểm danh từng buổi học của giảng viên.
 /// </summary>
-public class AttendanceRecord
+public class AttendanceRecord : AuditableEntity
 {
     // Thông tin khóa chính và quan hệ với lịch học, giảng viên
     public Guid Id { get; set; } = Guid.NewGuid();
@@ -18,10 +18,6 @@ public class AttendanceRecord
     public DateTime CheckedInAt { get; set; }
     public double Latitude { get; set; }
     public double Longitude { get; set; }
-
-    public DateOnly CreatedDate { get; set; } = DateOnly.FromDateTime(DateTime.UtcNow);
-
-    public TimeOnly CreatedTime { get; set; } = TimeOnly.FromDateTime(DateTime.UtcNow);
 
     public bool IsActive { get; set; } = true;
 

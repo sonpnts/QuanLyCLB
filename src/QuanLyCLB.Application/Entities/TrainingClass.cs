@@ -3,7 +3,7 @@ namespace QuanLyCLB.Application.Entities;
 /// <summary>
 /// Thực thể Lớp đào tạo mô tả thông tin lớp học và mối quan hệ với giảng viên, lịch học.
 /// </summary>
-public class TrainingClass
+public class TrainingClass : AuditableEntity
 {
     // Khóa chính của lớp học
     public Guid Id { get; set; } = Guid.NewGuid();
@@ -19,10 +19,6 @@ public class TrainingClass
     // Quan hệ với giảng viên phụ trách
     public Guid InstructorId { get; set; }
     public Instructor? Instructor { get; set; }
-
-    public DateOnly CreatedDate { get; set; } = DateOnly.FromDateTime(DateTime.UtcNow);
-
-    public TimeOnly CreatedTime { get; set; } = TimeOnly.FromDateTime(DateTime.UtcNow);
 
     public bool IsActive { get; set; } = true;
 

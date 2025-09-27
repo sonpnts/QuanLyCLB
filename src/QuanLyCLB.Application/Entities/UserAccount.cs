@@ -1,6 +1,6 @@
 namespace QuanLyCLB.Application.Entities;
 
-public class UserAccount
+public class UserAccount : AuditableEntity
 {
     public Guid Id { get; set; } = Guid.NewGuid();
 
@@ -15,11 +15,6 @@ public class UserAccount
     public string? GoogleSubject { get; set; }
 
     public string? PasswordHash { get; set; }
-
-    public DateOnly CreatedDate { get; set; } = DateOnly.FromDateTime(DateTime.UtcNow);
-
-    public TimeOnly CreatedTime { get; set; } = TimeOnly.FromDateTime(DateTime.UtcNow);
-
 
     public bool IsActive { get; set; } = true;
 

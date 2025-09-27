@@ -40,18 +40,23 @@ public record AttendanceTicketDto(
     string CreatedBy,
     bool IsApproved,
     string? ApprovedBy,
-    DateTime? ApprovedAt
+    DateTime? ApprovedAt,
+    Guid? CreatedByUserId = null,
+    DateTime? UpdatedAt = null,
+    Guid? UpdatedByUserId = null
 );
 
 public record CreateTicketRequest(
     Guid ClassScheduleId,
     Guid InstructorId,
     string Reason,
-    string CreatedBy
+    string CreatedBy,
+    Guid? CreatedByUserId = null
 );
 
 public record TicketApprovalRequest(
     bool Approve,
     string Approver,
-    string? Notes
+    string? Notes,
+    Guid? UpdatedByUserId = null
 );

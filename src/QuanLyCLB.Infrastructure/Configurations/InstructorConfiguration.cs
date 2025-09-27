@@ -11,8 +11,6 @@ public class InstructorConfiguration : IEntityTypeConfiguration<Instructor>
         builder.ToTable("Instructors");
         builder.HasKey(x => x.Id);
         builder.Property(x => x.HourlyRate).HasPrecision(18, 2);
-        builder.Property(x => x.CreatedDate).HasColumnType("date");
-        builder.Property(x => x.CreatedTime).HasColumnType("time");
         builder.Property(x => x.IsActive).HasDefaultValue(true);
         builder.HasIndex(x => x.UserAccountId).IsUnique();
 

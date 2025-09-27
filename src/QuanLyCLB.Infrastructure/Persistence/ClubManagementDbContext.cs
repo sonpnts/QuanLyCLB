@@ -1,3 +1,4 @@
+using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using QuanLyCLB.Application.Entities;
 
@@ -30,6 +31,19 @@ public class ClubManagementDbContext : DbContext
     {
         // Áp dụng toàn bộ cấu hình Fluent API trong assembly Infrastructure (tầng dữ liệu)
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(ClubManagementDbContext).Assembly);
+
+        foreach (var entityType in modelBuilder.Model.GetEntityTypes().Where(t => typeof(AuditableEntity).IsAssignableFrom(t.ClrType)))
+        {
+            modelBuilder.Entity(entityType.ClrType)
+                .Property(nameof(AuditableEntity.CreatedAt))
+                .HasColumnType("datetime2")
+                .HasDefaultValueSql("SYSUTCDATETIME()");
+
+            modelBuilder.Entity(entityType.ClrType)
+                .Property(nameof(AuditableEntity.UpdatedAt))
+                .HasColumnType("datetime2");
+        }
+
         base.OnModelCreating(modelBuilder);
     }
 }

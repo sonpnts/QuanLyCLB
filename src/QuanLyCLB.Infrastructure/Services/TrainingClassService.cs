@@ -1,3 +1,4 @@
+using System;
 using Microsoft.EntityFrameworkCore;
 using QuanLyCLB.Application.DTOs;
 using QuanLyCLB.Application.Entities;
@@ -85,6 +86,7 @@ public class TrainingClassService : ITrainingClassService
         entity.EndDate = request.EndDate;
         entity.MaxStudents = request.MaxStudents;
         entity.InstructorId = request.InstructorId;
+        entity.UpdatedAt = DateTime.UtcNow;
 
         await _dbContext.SaveChangesAsync(cancellationToken);
         return entity.ToDto();

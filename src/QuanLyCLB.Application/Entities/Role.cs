@@ -1,6 +1,6 @@
 namespace QuanLyCLB.Application.Entities;
 
-public class Role
+public class Role : AuditableEntity
 {
     public Guid Id { get; set; } = Guid.NewGuid();
 
