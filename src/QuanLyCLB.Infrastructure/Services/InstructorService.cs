@@ -1,3 +1,4 @@
+using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using QuanLyCLB.Application.DTOs;
 using QuanLyCLB.Application.Entities;
@@ -39,14 +40,10 @@ public class InstructorService : IInstructorService
 
     public async Task<InstructorDto> CreateAsync(CreateInstructorRequest request, CancellationToken cancellationToken = default)
     {
-        var emailExists = await _dbContext.Instructors
-            .AnyAsync(x => x.Email == request.Email, cancellationToken);
-        if (emailExists)
-        {
-            throw new InvalidOperationException($"Instructor with email {request.Email} already exists");
-        }
-
         var userAccount = await _dbContext.Users
+            .Include(x => x.UserRoles)
+                .ThenInclude(x => x.Role)
+            .Include(x => x.Instructor)
             .FirstOrDefaultAsync(x => x.Email == request.Email, cancellationToken);
 
         if (userAccount is null)
@@ -55,6 +52,8 @@ public class InstructorService : IInstructorService
             {
                 Username = request.Email,
                 Email = request.Email,
+                FullName = request.FullName,
+                PhoneNumber = request.PhoneNumber,
                 IsActive = true
             };
             _dbContext.Users.Add(userAccount);
@@ -66,21 +65,26 @@ public class InstructorService : IInstructorService
                 throw new InvalidOperationException("User account is disabled");
             }
 
+            if (userAccount.Instructor is not null)
+            {
+                throw new InvalidOperationException($"Instructor with email {request.Email} already exists");
+            }
+
             userAccount.Username = request.Email;
             userAccount.Email = request.Email;
+            userAccount.FullName = request.FullName;
+            userAccount.PhoneNumber = request.PhoneNumber;
         }
 
         var instructor = new Instructor
         {
             UserAccountId = userAccount.Id,
-            FullName = request.FullName,
-            Email = request.Email,
-            PhoneNumber = request.PhoneNumber,
             HourlyRate = request.HourlyRate,
             IsActive = true
         };
 
         _dbContext.Instructors.Add(instructor);
+        await EnsureRoleAssignedAsync(userAccount, "Instructor", cancellationToken);
         await _dbContext.SaveChangesAsync(cancellationToken);
         await _dbContext.Entry(instructor).Reference(x => x.User).LoadAsync(cancellationToken);
 
@@ -90,6 +94,7 @@ public class InstructorService : IInstructorService
     public async Task<InstructorDto?> UpdateAsync(Guid id, UpdateInstructorRequest request, CancellationToken cancellationToken = default)
     {
         var instructor = await _dbContext.Instructors
+            .Include(x => x.User)
             .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
         if (instructor is null)
         {
@@ -100,6 +105,7 @@ public class InstructorService : IInstructorService
         instructor.User.PhoneNumber = request.PhoneNumber;
         instructor.HourlyRate = request.HourlyRate;
         instructor.IsActive = request.IsActive;
+        instructor.User.IsActive = request.IsActive;
 
         await _dbContext.SaveChangesAsync(cancellationToken);
 
@@ -108,10 +114,21 @@ public class InstructorService : IInstructorService
 
     public async Task<bool> DeleteAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        var instructor = await _dbContext.Instructors.FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
+        var instructor = await _dbContext.Instructors
+            .Include(x => x.User)
+                .ThenInclude(x => x.UserRoles)
+                    .ThenInclude(x => x.Role)
+            .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
         if (instructor is null)
         {
             return false;
+        }
+
+        var instructorRole = instructor.User.UserRoles
+            .FirstOrDefault(x => string.Equals(x.Role.Name, "Instructor", StringComparison.OrdinalIgnoreCase));
+        if (instructorRole is not null)
+        {
+            _dbContext.UserRoles.Remove(instructorRole);
         }
 
         _dbContext.Instructors.Remove(instructor);
@@ -119,9 +136,11 @@ public class InstructorService : IInstructorService
         return true;
     }
 
-    public async Task<InstructorDto> SyncGoogleAccountAsync(string email, string fullName, string googleSubject, CancellationToken cancellationToken = default)
+    public async Task<InstructorAuthResult> SyncGoogleAccountAsync(string email, string fullName, string googleSubject, CancellationToken cancellationToken = default)
     {
         var userAccount = await _dbContext.Users
+            .Include(x => x.UserRoles)
+                .ThenInclude(x => x.Role)
             .FirstOrDefaultAsync(x => x.Email == email, cancellationToken);
 
         if (userAccount is null)
@@ -145,9 +164,11 @@ public class InstructorService : IInstructorService
 
         userAccount.Username = email;
         userAccount.Email = email;
+        userAccount.FullName = fullName;
 
         var instructor = await _dbContext.Instructors
-            .FirstOrDefaultAsync(x => x.Email == email, cancellationToken);
+            .Include(x => x.User)
+            .FirstOrDefaultAsync(x => x.UserAccountId == userAccount.Id, cancellationToken);
 
         if (instructor is null)
         {
@@ -159,11 +180,38 @@ public class InstructorService : IInstructorService
             throw new InvalidOperationException("Instructor account is disabled");
         }
 
-        instructor.FullName = fullName;
-        instructor.UserAccountId ??= userAccount.Id;
-
+        await EnsureRoleAssignedAsync(userAccount, "Instructor", cancellationToken);
         await _dbContext.SaveChangesAsync(cancellationToken);
 
-        return instructor.ToDto();
+        var roles = userAccount.UserRoles
+            .Select(x => x.Role.Name)
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .ToList();
+
+        return new InstructorAuthResult(instructor.ToDto(), roles);
+    }
+
+    private async Task EnsureRoleAssignedAsync(UserAccount userAccount, string roleName, CancellationToken cancellationToken)
+    {
+        if (userAccount.UserRoles.Any(x => string.Equals(x.Role.Name, roleName, StringComparison.OrdinalIgnoreCase)))
+        {
+            return;
+        }
+
+        var role = await _dbContext.Roles.FirstOrDefaultAsync(x => x.Name == roleName, cancellationToken);
+        if (role is null)
+        {
+            role = new Role
+            {
+                Name = roleName
+            };
+            _dbContext.Roles.Add(role);
+        }
+
+        userAccount.UserRoles.Add(new UserRole
+        {
+            User = userAccount,
+            Role = role
+        });
     }
 }

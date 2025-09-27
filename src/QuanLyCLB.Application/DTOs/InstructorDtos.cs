@@ -22,3 +22,8 @@ public record UpdateInstructorRequest(
     decimal HourlyRate,
     bool IsActive
 );
+
+public record InstructorAuthResult(
+    InstructorDto Instructor,
+    IReadOnlyCollection<string> Roles
+);
