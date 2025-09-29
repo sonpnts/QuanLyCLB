@@ -145,14 +145,71 @@ namespace QuanLyCLB.Infrastructure.Migrations
                     b.ToTable("AttendanceTickets", (string)null);
                 });
 
+            modelBuilder.Entity("QuanLyCLB.Application.Entities.Branch", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Address")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<double>("AllowedRadiusMeters")
+                        .HasColumnType("float");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("SYSUTCDATETIME()");
+
+                    b.Property<Guid?>("CreatedByUserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("GoogleMapsEmbedUrl")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("GooglePlaceId")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<double>("Latitude")
+                        .HasColumnType("float");
+
+                    b.Property<double>("Longitude")
+                        .HasColumnType("float");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("UpdatedByUserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
+
+                    b.ToTable("Branches", (string)null);
+                });
+
             modelBuilder.Entity("QuanLyCLB.Application.Entities.ClassSchedule", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<double>("AllowedRadiusMeters")
-                        .HasColumnType("float");
+                    b.Property<Guid>("BranchId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2")
@@ -170,17 +227,6 @@ namespace QuanLyCLB.Infrastructure.Migrations
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
-                    b.Property<double>("Latitude")
-                        .HasColumnType("float");
-
-                    b.Property<string>("LocationName")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
-
-                    b.Property<double>("Longitude")
-                        .HasColumnType("float");
-
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
 
@@ -190,15 +236,17 @@ namespace QuanLyCLB.Infrastructure.Migrations
                     b.Property<TimeOnly>("StartTime")
                         .HasColumnType("time");
 
-                    b.Property<DateOnly>("StudyDate")
-                        .HasColumnType("date");
-
                     b.Property<Guid>("TrainingClassId")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("TrainingClassId", "StudyDate")
+                    b.HasIndex("BranchId");
+
+                    b.HasIndex("TrainingClassId", "DayOfWeek")
+                        .IsUnique();
+
+                    b.HasIndex("TrainingClassId", "DayOfWeek", "StartTime", "EndTime")
                         .IsUnique();
 
                     b.ToTable("ClassSchedules", (string)null);
@@ -571,13 +619,25 @@ namespace QuanLyCLB.Infrastructure.Migrations
 
             modelBuilder.Entity("QuanLyCLB.Application.Entities.ClassSchedule", b =>
                 {
+                    b.HasOne("QuanLyCLB.Application.Entities.Branch", "Branch")
+                        .WithMany("ClassSchedules")
+                        .HasForeignKey("BranchId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("QuanLyCLB.Application.Entities.TrainingClass", "TrainingClass")
                         .WithMany("Schedules")
                         .HasForeignKey("TrainingClassId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.Navigation("Branch");
                     b.Navigation("TrainingClass");
+                });
+
+            modelBuilder.Entity("QuanLyCLB.Application.Entities.Branch", b =>
+                {
+                    b.Navigation("ClassSchedules");
                 });
 
             modelBuilder.Entity("QuanLyCLB.Application.Entities.Instructor", b =>

@@ -132,19 +132,38 @@ namespace QuanLyCLB.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Branches",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
+                    Address = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
+                    Latitude = table.Column<double>(type: "float", nullable: false),
+                    Longitude = table.Column<double>(type: "float", nullable: false),
+                    AllowedRadiusMeters = table.Column<double>(type: "float", nullable: false),
+                    GooglePlaceId = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: true),
+                    GoogleMapsEmbedUrl = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "SYSUTCDATETIME()"),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    CreatedByUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    UpdatedByUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Branches", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "ClassSchedules",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     TrainingClassId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    StudyDate = table.Column<DateOnly>(type: "date", nullable: false),
+                    DayOfWeek = table.Column<int>(type: "int", nullable: false),
                     StartTime = table.Column<TimeOnly>(type: "time", nullable: false),
                     EndTime = table.Column<TimeOnly>(type: "time", nullable: false),
-                    DayOfWeek = table.Column<int>(type: "int", nullable: false),
-                    LocationName = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
-                    Latitude = table.Column<double>(type: "float", nullable: false),
-                    Longitude = table.Column<double>(type: "float", nullable: false),
-                    AllowedRadiusMeters = table.Column<double>(type: "float", nullable: false),
+                    BranchId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     IsActive = table.Column<bool>(type: "bit", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "SYSUTCDATETIME()"),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
@@ -154,6 +173,12 @@ namespace QuanLyCLB.Infrastructure.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_ClassSchedules", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ClassSchedules_Branches_BranchId",
+                        column: x => x.BranchId,
+                        principalTable: "Branches",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_ClassSchedules_TrainingClasses_TrainingClassId",
                         column: x => x.TrainingClassId,
@@ -327,9 +352,26 @@ namespace QuanLyCLB.Infrastructure.Migrations
                 column: "InstructorId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ClassSchedules_TrainingClassId_StudyDate",
+                name: "IX_Branches_Name",
+                table: "Branches",
+                column: "Name",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ClassSchedules_BranchId",
                 table: "ClassSchedules",
-                columns: new[] { "TrainingClassId", "StudyDate" },
+                column: "BranchId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ClassSchedules_TrainingClassId_DayOfWeek",
+                table: "ClassSchedules",
+                columns: new[] { "TrainingClassId", "DayOfWeek" },
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ClassSchedules_TrainingClassId_DayOfWeek_StartTime_EndTime",
+                table: "ClassSchedules",
+                columns: new[] { "TrainingClassId", "DayOfWeek", "StartTime", "EndTime" },
                 unique: true);
 
             migrationBuilder.CreateIndex(
@@ -412,6 +454,9 @@ namespace QuanLyCLB.Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "ClassSchedules");
+
+            migrationBuilder.DropTable(
+                name: "Branches");
 
             migrationBuilder.DropTable(
                 name: "TrainingClasses");

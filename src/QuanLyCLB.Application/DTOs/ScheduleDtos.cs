@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using QuanLyCLB.Application.Enums;
 
 namespace QuanLyCLB.Application.DTOs;
@@ -5,48 +7,31 @@ namespace QuanLyCLB.Application.DTOs;
 public record ClassScheduleDto(
     Guid Id,
     Guid TrainingClassId,
-    DateOnly StudyDate,
+    DayOfWeek DayOfWeek,
     TimeOnly StartTime,
     TimeOnly EndTime,
-    DayOfWeek DayOfWeek,
-    string LocationName,
-    double Latitude,
-    double Longitude,
-    double AllowedRadiusMeters
+    BranchDto Branch
 );
 
 public record CreateClassScheduleRequest(
     Guid TrainingClassId,
-    DateOnly StudyDate,
+    DayOfWeek DayOfWeek,
     TimeOnly StartTime,
     TimeOnly EndTime,
-    DayOfWeek DayOfWeek,
-    string LocationName,
-    double Latitude,
-    double Longitude,
-    double AllowedRadiusMeters
+    Guid BranchId
 );
 
 public record UpdateClassScheduleRequest(
-    DateOnly StudyDate,
+    DayOfWeek DayOfWeek,
     TimeOnly StartTime,
     TimeOnly EndTime,
-    DayOfWeek DayOfWeek,
-    string LocationName,
-    double Latitude,
-    double Longitude,
-    double AllowedRadiusMeters
+    Guid BranchId
 );
 
 public record BulkCreateScheduleRequest(
     Guid TrainingClassId,
-    DateOnly FromDate,
-    DateOnly ToDate,
     IReadOnlyCollection<DayOfWeek> DaysOfWeek,
     TimeOnly StartTime,
     TimeOnly EndTime,
-    string LocationName,
-    double Latitude,
-    double Longitude,
-    double AllowedRadiusMeters
+    Guid BranchId
 );

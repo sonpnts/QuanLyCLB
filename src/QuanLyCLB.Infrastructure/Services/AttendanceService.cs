@@ -1,4 +1,8 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using QuanLyCLB.Application.DTOs;
 using QuanLyCLB.Application.Entities;
@@ -22,6 +26,7 @@ public class AttendanceService : IAttendanceService
     {
         var schedule = await _dbContext.ClassSchedules
             .Include(s => s.TrainingClass)
+            .Include(s => s.Branch)
             .FirstOrDefaultAsync(s => s.Id == request.ClassScheduleId, cancellationToken)
             ?? throw new InvalidOperationException("Class schedule not found");
 
@@ -30,10 +35,13 @@ public class AttendanceService : IAttendanceService
             throw new InvalidOperationException("Instructor is not assigned to this class");
         }
 
-        var distance = GeoDistanceCalculator.CalculateDistanceMeters(schedule.Latitude, schedule.Longitude, request.Latitude, request.Longitude);
-        if (distance > schedule.AllowedRadiusMeters)
+        schedule.EnsureScheduleIsActiveForDate(request.CheckedInAt);
+
+        var branch = schedule.Branch ?? throw new InvalidOperationException("Schedule does not reference a branch");
+        var distance = GeoDistanceCalculator.CalculateDistanceMeters(branch.Latitude, branch.Longitude, request.Latitude, request.Longitude);
+        if (distance > branch.AllowedRadiusMeters)
         {
-            throw new InvalidOperationException($"Check-in location is outside of allowed radius ({distance:F2}m > {schedule.AllowedRadiusMeters:F2}m)");
+            throw new InvalidOperationException($"Check-in location is outside of allowed radius ({distance:F2}m > {branch.AllowedRadiusMeters:F2}m)");
         }
 
         var status = DetermineAttendanceStatus(schedule, request.CheckedInAt);
@@ -58,16 +66,19 @@ public class AttendanceService : IAttendanceService
     {
         var schedule = await _dbContext.ClassSchedules
             .Include(s => s.TrainingClass)
+            .Include(s => s.Branch)
             .FirstOrDefaultAsync(s => s.Id == request.ClassScheduleId, cancellationToken)
             ?? throw new InvalidOperationException("Class schedule not found");
+
+        var branch = schedule.Branch ?? throw new InvalidOperationException("Schedule does not reference a branch");
 
         var record = new AttendanceRecord
         {
             ClassScheduleId = request.ClassScheduleId,
             InstructorId = request.InstructorId,
             CheckedInAt = request.OccurredAt,
-            Latitude = schedule.Latitude,
-            Longitude = schedule.Longitude,
+            Latitude = branch.Latitude,
+            Longitude = branch.Longitude,
             Status = request.Status,
             Notes = request.Notes,
             TicketId = request.TicketId
@@ -82,11 +93,9 @@ public class AttendanceService : IAttendanceService
     {
         var records = await _dbContext.AttendanceRecords
             .AsNoTracking()
-            .Include(r => r.ClassSchedule)
             .Where(r => r.InstructorId == instructorId &&
-                        r.ClassSchedule != null &&
-                        r.ClassSchedule.StudyDate >= fromDate &&
-                        r.ClassSchedule.StudyDate <= toDate)
+                        r.CheckedInAt >= fromDate.ToDateTime(TimeOnly.MinValue) &&
+                        r.CheckedInAt <= toDate.ToDateTime(TimeOnly.MaxValue))
             .OrderBy(r => r.CheckedInAt)
             .Select(r => new AttendanceRecord
             {
@@ -159,10 +168,38 @@ public class AttendanceService : IAttendanceService
 
     private static AttendanceStatus DetermineAttendanceStatus(ClassSchedule schedule, DateTime checkInTime)
     {
-        var scheduledStart = schedule.StudyDate.ToDateTime(schedule.StartTime);
+        var checkInDate = DateOnly.FromDateTime(checkInTime);
+        var scheduledStart = checkInDate.ToDateTime(schedule.StartTime);
         var gracePeriod = scheduledStart.AddMinutes(10);
 
         return checkInTime <= gracePeriod ? AttendanceStatus.Present : AttendanceStatus.Late;
+    }
+}
+
+internal static class ScheduleValidationExtensions
+{
+    public static void EnsureScheduleIsActiveForDate(this ClassSchedule schedule, DateTime checkInTime)
+    {
+        if (schedule.TrainingClass is null)
+        {
+            throw new InvalidOperationException("Schedule is not linked to a class");
+        }
+
+        var checkInDate = DateOnly.FromDateTime(checkInTime);
+        if (schedule.DayOfWeek != checkInDate.DayOfWeek)
+        {
+            throw new InvalidOperationException("Check-in day does not match schedule");
+        }
+
+        if (checkInDate < schedule.TrainingClass.StartDate)
+        {
+            throw new InvalidOperationException("Check-in date is before the class start date");
+        }
+
+        if (schedule.TrainingClass.EndDate.HasValue && checkInDate > schedule.TrainingClass.EndDate.Value)
+        {
+            throw new InvalidOperationException("Check-in date is after the class end date");
+        }
     }
 }
 

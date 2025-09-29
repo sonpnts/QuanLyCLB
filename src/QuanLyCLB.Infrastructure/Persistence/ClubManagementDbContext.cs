@@ -20,6 +20,7 @@ public class ClubManagementDbContext : DbContext
     public DbSet<Role> Roles => Set<Role>();
     public DbSet<UserRole> UserRoles => Set<UserRole>();
     public DbSet<Instructor> Instructors => Set<Instructor>();
+    public DbSet<Branch> Branches => Set<Branch>();
     public DbSet<TrainingClass> TrainingClasses => Set<TrainingClass>();
     public DbSet<ClassSchedule> ClassSchedules => Set<ClassSchedule>();
     public DbSet<AttendanceRecord> AttendanceRecords => Set<AttendanceRecord>();

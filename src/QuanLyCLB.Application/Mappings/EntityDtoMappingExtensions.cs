@@ -1,3 +1,4 @@
+using System;
 using QuanLyCLB.Application.DTOs;
 using QuanLyCLB.Application.Entities;
 
@@ -23,17 +24,23 @@ public static class EntityDtoMappingExtensions
         entity.MaxStudents,
         entity.InstructorId);
 
+    public static BranchDto ToDto(this Branch entity) => new(
+        entity.Id,
+        entity.Name,
+        entity.Address,
+        entity.Latitude,
+        entity.Longitude,
+        entity.AllowedRadiusMeters,
+        entity.GooglePlaceId,
+        entity.GoogleMapsEmbedUrl);
+
     public static ClassScheduleDto ToDto(this ClassSchedule entity) => new(
         entity.Id,
         entity.TrainingClassId,
-        entity.StudyDate,
+        entity.DayOfWeek,
         entity.StartTime,
         entity.EndTime,
-        entity.DayOfWeek,
-        entity.LocationName,
-        entity.Latitude,
-        entity.Longitude,
-        entity.AllowedRadiusMeters);
+        entity.Branch?.ToDto() ?? throw new InvalidOperationException("Class schedule is missing branch information"));
 
     public static AttendanceRecordDto ToDto(this AttendanceRecord entity) => new(
         entity.Id,
