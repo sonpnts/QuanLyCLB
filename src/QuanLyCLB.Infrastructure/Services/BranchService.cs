@@ -49,7 +49,7 @@ public class BranchService : IBranchService
             Latitude = request.Latitude,
             Longitude = request.Longitude,
             AllowedRadiusMeters = request.AllowedRadiusMeters,
-            GooglePlaceId = request.GooglePlaceId,
+            //GooglePlaceId = request.GooglePlaceId,
             GoogleMapsEmbedUrl = request.GoogleMapsEmbedUrl
         };
 
@@ -72,7 +72,7 @@ public class BranchService : IBranchService
         entity.Latitude = request.Latitude;
         entity.Longitude = request.Longitude;
         entity.AllowedRadiusMeters = request.AllowedRadiusMeters;
-        entity.GooglePlaceId = request.GooglePlaceId;
+        //entity.GooglePlaceId = request.GooglePlaceId;
         entity.GoogleMapsEmbedUrl = request.GoogleMapsEmbedUrl;
         entity.IsActive = request.IsActive;
         entity.UpdatedAt = DateTime.UtcNow;

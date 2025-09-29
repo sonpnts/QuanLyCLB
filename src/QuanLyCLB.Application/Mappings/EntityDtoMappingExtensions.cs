@@ -31,7 +31,7 @@ public static class EntityDtoMappingExtensions
         entity.Latitude,
         entity.Longitude,
         entity.AllowedRadiusMeters,
-        entity.GooglePlaceId,
+        //entity.GooglePlaceId,
         entity.GoogleMapsEmbedUrl);
 
     public static ClassScheduleDto ToDto(this ClassSchedule entity) => new(

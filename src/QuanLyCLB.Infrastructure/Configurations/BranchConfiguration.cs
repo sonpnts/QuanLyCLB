@@ -19,8 +19,8 @@ public class BranchConfiguration : IEntityTypeConfiguration<Branch>
             .HasMaxLength(500)
             .IsRequired();
 
-        builder.Property(b => b.GooglePlaceId)
-            .HasMaxLength(200);
+        //builder.Property(b => b.GooglePlaceId)
+        //    .HasMaxLength(200);
 
         builder.Property(b => b.GoogleMapsEmbedUrl)
             .HasMaxLength(500);

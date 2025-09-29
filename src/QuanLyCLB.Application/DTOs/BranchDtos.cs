@@ -9,7 +9,7 @@ public record BranchDto(
     double Latitude,
     double Longitude,
     double AllowedRadiusMeters,
-    string? GooglePlaceId,
+    //string? GooglePlaceId,
     string? GoogleMapsEmbedUrl
 );
 
@@ -19,7 +19,7 @@ public record CreateBranchRequest(
     double Latitude,
     double Longitude,
     double AllowedRadiusMeters,
-    string? GooglePlaceId,
+    //string? GooglePlaceId,
     string? GoogleMapsEmbedUrl
 );
 
@@ -29,7 +29,7 @@ public record UpdateBranchRequest(
     double Latitude,
     double Longitude,
     double AllowedRadiusMeters,
-    string? GooglePlaceId,
+    //string? GooglePlaceId,
     string? GoogleMapsEmbedUrl,
     bool IsActive
 );

@@ -10,7 +10,7 @@ using QuanLyCLB.Application.Interfaces;
 namespace QuanLyCLB.Api.Controllers;
 
 [ApiController]
-[Authorize(Policy = "AdminOnly")]
+// [Authorize(Policy = "AdminOnly")]
 [Route("api/[controller]")]
 public class BranchesController : ControllerBase
 {

@@ -20,7 +20,7 @@ public class Branch : AuditableEntity
 
     public double AllowedRadiusMeters { get; set; }
 
-    public string? GooglePlaceId { get; set; }
+    //public string? GooglePlaceId { get; set; }
 
     public string? GoogleMapsEmbedUrl { get; set; }
 

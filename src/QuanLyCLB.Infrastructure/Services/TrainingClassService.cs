@@ -44,8 +44,8 @@ public class TrainingClassService : ITrainingClassService
             throw new InvalidOperationException($"Class with code {request.Code} already exists");
         }
 
-        var instructorExists = await _dbContext.Instructors.AnyAsync(x => x.Id == request.InstructorId, cancellationToken);
-        if (!instructorExists)
+        var instructorExists = await _dbContext.Instructors.FirstOrDefaultAsync(x => x.UserAccountId == request.InstructorId, cancellationToken);
+        if (instructorExists == null)
         {
             throw new InvalidOperationException("Instructor does not exist");
         }
@@ -58,7 +58,7 @@ public class TrainingClassService : ITrainingClassService
             StartDate = request.StartDate,
             EndDate = request.EndDate,
             MaxStudents = request.MaxStudents,
-            InstructorId = request.InstructorId
+            InstructorId = instructorExists.Id
         };
 
         _dbContext.TrainingClasses.Add(entity);

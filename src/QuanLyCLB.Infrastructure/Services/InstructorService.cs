@@ -165,9 +165,9 @@ public class InstructorService : IInstructorService
             throw new InvalidOperationException("Google account does not match the registered email");
         }
 
-        userAccount.Username = email;
+        //userAccount.Username = email;
         userAccount.Email = email;
-        userAccount.FullName = fullName;
+        //userAccount.FullName = fullName;
 
         var instructor = await _dbContext.Instructors
             .Include(x => x.User)
