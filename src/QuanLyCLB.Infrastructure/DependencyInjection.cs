@@ -25,6 +25,7 @@ public static class DependencyInjection
         });
 
         services.AddScoped<IInstructorService, InstructorService>();
+        services.AddScoped<IBranchService, BranchService>();
         services.AddScoped<ITrainingClassService, TrainingClassService>();
         services.AddScoped<IScheduleService, ScheduleService>();
         services.AddScoped<IAttendanceService, AttendanceService>();

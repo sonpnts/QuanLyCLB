@@ -152,30 +152,68 @@ Các endpoint dưới đây yêu cầu token hợp lệ trừ khi ghi chú khác
   ```json
   {
     "trainingClassId": "<classId>",
-    "fromDate": "2024-04-01",
-    "toDate": "2024-04-30",
-    "daysOfWeek": ["Monday", "Wednesday"],
+    "daysOfWeek": ["Monday", "Wednesday", "Friday"],
     "startTime": "18:00:00",
     "endTime": "19:30:00",
-    "locationName": "Phòng 201",
-    "latitude": 10.762622,
-    "longitude": 106.660172,
-    "allowedRadiusMeters": 50
+    "branchId": "<branchId>"
   }
   ```
 - **Response 200**: danh sách lịch đã tạo.
-- **Lưu ý**: `classId` trong URL phải trùng `trainingClassId` trong body.
+- **Lưu ý**:
+  - `classId` trong URL phải trùng `trainingClassId` trong body.
+  - Mỗi phần tử trong `daysOfWeek` tương ứng với một bản ghi lịch cố định theo tuần. Ví dụ lớp học 3 buổi/tuần sẽ có đúng 3 bản ghi.
+  - Nếu lớp đã có lịch cho ngày trong tuần được gửi lên, hệ thống sẽ cập nhật khung giờ và chi nhánh thay vì tạo bản ghi trùng lặp.
 
-## 6. API lịch học (`/api/schedules`)
+## 6. API chi nhánh (`/api/branches`)
+
+> Yêu cầu role `Admin`.
+
+- `GET /api/branches`: trả về danh sách `BranchDto` (bao gồm tên, địa chỉ, tọa độ, bán kính điểm danh và thông tin Google Maps đi kèm).
+- `GET /api/branches/{id}`: lấy chi tiết một chi nhánh.
+- `POST /api/branches`: tạo chi nhánh mới.
+  ```json
+  {
+    "name": "CLB Cơ Sở Quận 1",
+    "address": "12 Nguyễn Huệ, Q.1, TP.HCM",
+    "latitude": 10.773374,
+    "longitude": 106.704352,
+    "allowedRadiusMeters": 60,
+    "googlePlaceId": "ChIJL6wn6qQpdTERNckkTZ8edQw",
+    "googleMapsEmbedUrl": "https://www.google.com/maps/embed?pb=<tham_so>"
+  }
+  ```
+- `PUT /api/branches/{id}`: cập nhật thông tin chi nhánh, bao gồm trạng thái `isActive`.
+- `DELETE /api/branches/{id}`: xóa chi nhánh (chỉ thực hiện được khi không còn lịch học tham chiếu).
+
+### Tích hợp Google Maps cho phần chọn địa điểm
+
+- Sử dụng [Google Places Autocomplete](https://developers.google.com/maps/documentation/javascript/places-autocomplete) hoặc [Place Details API](https://developers.google.com/maps/documentation/places/web-service/details) để tìm kiếm địa điểm, sau đó lưu `googlePlaceId` vào bảng chi nhánh.
+- Có thể nhúng iframe Google Maps bằng `googleMapsEmbedUrl` (lấy từ [Google Maps Embed API](https://developers.google.com/maps/documentation/embed/overview)). Ví dụ trong frontend:
+  ```html
+  <iframe
+    width="100%"
+    height="360"
+    style="border:0"
+    allowfullscreen
+    loading="lazy"
+    referrerpolicy="no-referrer-when-downgrade"
+    src="https://www.google.com/maps/embed?pb=<tham_so>"
+  ></iframe>
+  ```
+- Khi người dùng rê và chọn vị trí trên bản đồ, gửi lại tọa độ (lat/lng) và bán kính mong muốn lên API để lưu vào `Branch`.
+
+## 7. API lịch học (`/api/schedules`)
 
 > Yêu cầu role `Admin`.
 
 - `GET /api/schedules/{id}`: lấy chi tiết lịch học.
-- `POST /api/schedules`: tạo lịch đơn lẻ với payload giống `CreateClassScheduleRequest`.
-- `PUT /api/schedules/{id}`: cập nhật lịch.
+- `POST /api/schedules`: tạo lịch đơn lẻ với payload gồm `trainingClassId`, `dayOfWeek`, `startTime`, `endTime`, `branchId`.
+- `PUT /api/schedules/{id}`: cập nhật lịch (bao gồm đổi chi nhánh và ngày trong tuần).
 - `DELETE /api/schedules/{id}`: xóa lịch.
 
-## 7. API điểm danh (`/api/attendance`)
+`ClassScheduleDto` trả về sẽ bao gồm thông tin chi tiết của chi nhánh để ứng dụng hiển thị bản đồ và tính toán bán kính điểm danh.
+
+## 8. API điểm danh (`/api/attendance`)
 
 ### POST `/api/attendance/check-in`
 - **Phân quyền**: `InstructorOnly` (giảng viên tự điểm danh).
@@ -190,6 +228,7 @@ Các endpoint dưới đây yêu cầu token hợp lệ trừ khi ghi chú khác
   }
   ```
 - **Response 200**: `AttendanceRecordDto` chứa kết quả điểm danh.
+- **Lưu ý**: hệ thống tự động kiểm tra ngày điểm danh có cùng `dayOfWeek` với lịch và thời gian nằm trong khoảng thời gian lớp còn hiệu lực.
 - **Response 403**: nếu `instructorId` không khớp với token.
 
 ### POST `/api/attendance/manual`
@@ -237,7 +276,7 @@ Các endpoint dưới đây yêu cầu token hợp lệ trừ khi ghi chú khác
   ```
 - **Response 200**: ticket sau cập nhật, `404` nếu không tồn tại.
 
-## 8. API bảng lương (`/api/payroll`)
+## 9. API bảng lương (`/api/payroll`)
 
 ### POST `/api/payroll/generate`
 - **Phân quyền**: `AdminOnly`.
@@ -260,7 +299,7 @@ Các endpoint dưới đây yêu cầu token hợp lệ trừ khi ghi chú khác
 - **Phân quyền**: `AdminOnly`.
 - **Response**: chi tiết một kỳ lương, `404` nếu không tìm thấy.
 
-## 9. Thực hành tích hợp nhanh
+## 10. Thực hành tích hợp nhanh
 
 1. **Đăng nhập**: gọi `POST /api/auth/google` với `idToken` → nhận `accessToken`.
 2. **Thêm lớp & lịch**: dùng token admin gọi các endpoint lớp học và lịch học.
@@ -268,7 +307,7 @@ Các endpoint dưới đây yêu cầu token hợp lệ trừ khi ghi chú khác
 4. **Xử lý vắng mặt**: giảng viên tạo ticket, admin duyệt.
 5. **Tổng hợp lương**: admin tạo payroll cho từng tháng và theo dõi qua các API bảng lương.
 
-## 10. Mẹo xử lý lỗi
+## 11. Mẹo xử lý lỗi
 
 - **401 Unauthorized**: kiểm tra lại header `Authorization` hoặc token đã hết hạn.
 - **403 Forbidden**: role hiện tại không đủ quyền hoặc `instructorId` không khớp với token.

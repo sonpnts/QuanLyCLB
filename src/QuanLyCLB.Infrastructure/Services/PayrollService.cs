@@ -1,3 +1,8 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using QuanLyCLB.Application.DTOs;
 using QuanLyCLB.Application.Entities;
@@ -22,12 +27,14 @@ public class PayrollService : IPayrollService
         var instructor = await _dbContext.Instructors.FirstOrDefaultAsync(i => i.Id == request.InstructorId, cancellationToken)
             ?? throw new InvalidOperationException("Instructor not found");
 
+        var monthStart = DateTime.SpecifyKind(new DateTime(request.Year, request.Month, 1, 0, 0, 0), DateTimeKind.Utc);
+        var monthEnd = monthStart.AddMonths(1).AddTicks(-1);
+
         var attendanceRecords = await _dbContext.AttendanceRecords
             .Include(a => a.ClassSchedule)
             .Where(a => a.InstructorId == request.InstructorId &&
-                        a.ClassSchedule != null &&
-                        a.ClassSchedule.StudyDate.Year == request.Year &&
-                        a.ClassSchedule.StudyDate.Month == request.Month &&
+                        a.CheckedInAt >= monthStart &&
+                        a.CheckedInAt <= monthEnd &&
                         (a.Status == AttendanceStatus.Present || a.Status == AttendanceStatus.Late || a.Status == AttendanceStatus.Manual))
             .ToListAsync(cancellationToken);
 

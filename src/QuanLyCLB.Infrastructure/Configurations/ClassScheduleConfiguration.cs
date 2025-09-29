@@ -10,14 +10,17 @@ public class ClassScheduleConfiguration : IEntityTypeConfiguration<ClassSchedule
     {
         builder.ToTable("ClassSchedules");
         builder.HasKey(x => x.Id);
-        builder.HasIndex(x => new { x.TrainingClassId, x.StudyDate }).IsUnique();
-
-        builder.Property(x => x.LocationName).HasMaxLength(200).IsRequired();
-        builder.Property(x => x.AllowedRadiusMeters).HasPrecision(18, 2);
+        builder.HasIndex(x => new { x.TrainingClassId, x.DayOfWeek }).IsUnique();
+        builder.HasIndex(x => new { x.TrainingClassId, x.DayOfWeek, x.StartTime, x.EndTime }).IsUnique();
 
         builder.HasOne(x => x.TrainingClass)
             .WithMany(c => c.Schedules)
             .HasForeignKey(x => x.TrainingClassId)
             .OnDelete(DeleteBehavior.Cascade);
+
+        builder.HasOne(x => x.Branch)
+            .WithMany(b => b.ClassSchedules)
+            .HasForeignKey(x => x.BranchId)
+            .OnDelete(DeleteBehavior.Restrict);
     }
 }

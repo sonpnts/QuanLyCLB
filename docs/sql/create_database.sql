@@ -89,21 +89,41 @@ BEGIN
 END
 GO
 
--- Bảng lịch học chi tiết theo từng buổi
+-- Bảng chi nhánh lưu thông tin địa điểm điểm danh
+IF OBJECT_ID(N'dbo.Branches', N'U') IS NULL
+BEGIN
+    CREATE TABLE dbo.Branches
+    (
+        Id UNIQUEIDENTIFIER NOT NULL PRIMARY KEY,
+        Name NVARCHAR(200) NOT NULL,
+        Address NVARCHAR(500) NOT NULL,
+        Latitude FLOAT NOT NULL,
+        Longitude FLOAT NOT NULL,
+        AllowedRadiusMeters FLOAT NOT NULL,
+        GooglePlaceId NVARCHAR(200) NULL,
+        GoogleMapsEmbedUrl NVARCHAR(500) NULL,
+        CreatedAt DATETIME2 NOT NULL DEFAULT SYSUTCDATETIME(),
+        UpdatedAt DATETIME2 NULL,
+        CreatedByUserId UNIQUEIDENTIFIER NULL,
+        UpdatedByUserId UNIQUEIDENTIFIER NULL,
+        IsActive BIT NOT NULL DEFAULT 1
+    );
+
+    CREATE UNIQUE INDEX IX_Branches_Name ON dbo.Branches(Name);
+END
+GO
+
+-- Bảng lịch học theo tuần của lớp
 IF OBJECT_ID(N'dbo.ClassSchedules', N'U') IS NULL
 BEGIN
     CREATE TABLE dbo.ClassSchedules
     (
         Id UNIQUEIDENTIFIER NOT NULL PRIMARY KEY,
         TrainingClassId UNIQUEIDENTIFIER NOT NULL,
-        StudyDate DATE NOT NULL,
+        DayOfWeek INT NOT NULL,
         StartTime TIME NOT NULL,
         EndTime TIME NOT NULL,
-        DayOfWeek INT NOT NULL,
-        LocationName NVARCHAR(200) NOT NULL,
-        Latitude FLOAT NOT NULL,
-        Longitude FLOAT NOT NULL,
-        AllowedRadiusMeters DECIMAL(18, 2) NOT NULL,
+        BranchId UNIQUEIDENTIFIER NOT NULL,
         CreatedAt DATETIME2 NOT NULL DEFAULT SYSUTCDATETIME(),
         UpdatedAt DATETIME2 NULL,
         CreatedByUserId UNIQUEIDENTIFIER NULL,
@@ -116,8 +136,16 @@ BEGIN
             FOREIGN KEY (TrainingClassId) REFERENCES dbo.TrainingClasses(Id)
             ON DELETE CASCADE;
 
-    CREATE UNIQUE INDEX IX_ClassSchedules_ClassDate
-        ON dbo.ClassSchedules(TrainingClassId, StudyDate);
+    ALTER TABLE dbo.ClassSchedules
+        ADD CONSTRAINT FK_ClassSchedules_Branches
+            FOREIGN KEY (BranchId) REFERENCES dbo.Branches(Id)
+            ON DELETE NO ACTION;
+
+    CREATE UNIQUE INDEX IX_ClassSchedules_TrainingClass_Day
+        ON dbo.ClassSchedules(TrainingClassId, DayOfWeek);
+
+    CREATE UNIQUE INDEX IX_ClassSchedules_TrainingClass_Day_Time
+        ON dbo.ClassSchedules(TrainingClassId, DayOfWeek, StartTime, EndTime);
 END
 GO
 

@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using QuanLyCLB.Application.Enums;
 
 namespace QuanLyCLB.Application.Entities;
@@ -12,17 +14,14 @@ public class ClassSchedule : AuditableEntity
     public Guid TrainingClassId { get; set; }
     public TrainingClass? TrainingClass { get; set; }
 
-    // Thông tin thời gian diễn ra buổi học
-    public DateOnly StudyDate { get; set; }
+    // Thông tin thời gian diễn ra buổi học theo tuần
+    public DayOfWeek DayOfWeek { get; set; }
     public TimeOnly StartTime { get; set; }
     public TimeOnly EndTime { get; set; }
-    public DayOfWeek DayOfWeek { get; set; }
 
-    // Thông tin địa điểm và bán kính được phép điểm danh
-    public string LocationName { get; set; } = string.Empty;
-    public double Latitude { get; set; }
-    public double Longitude { get; set; }
-    public double AllowedRadiusMeters { get; set; }
+    // Địa điểm tổ chức được tham chiếu qua bảng chi nhánh
+    public Guid BranchId { get; set; }
+    public Branch? Branch { get; set; }
 
     public bool IsActive { get; set; } = true;
 
