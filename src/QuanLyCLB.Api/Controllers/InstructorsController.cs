@@ -18,9 +18,9 @@ public class InstructorsController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<IReadOnlyCollection<InstructorDto>>> GetAll(CancellationToken cancellationToken)
+    public async Task<ActionResult<PagedResult<InstructorDto>>> GetAll([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 20, CancellationToken cancellationToken = default)
     {
-        var result = await _instructorService.GetAllAsync(cancellationToken);
+        var result = await _instructorService.GetAllAsync(pageNumber, pageSize, cancellationToken);
         return Ok(result);
     }
 
