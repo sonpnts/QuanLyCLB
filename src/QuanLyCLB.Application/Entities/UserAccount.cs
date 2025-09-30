@@ -12,6 +12,8 @@ public class UserAccount : AuditableEntity
 
     public string PhoneNumber { get; set; } = string.Empty;
 
+    public string? AvatarUrl { get; set; }
+
     public string? GoogleSubject { get; set; }
 
     public string? PasswordHash { get; set; }
@@ -23,4 +25,6 @@ public class UserAccount : AuditableEntity
     public Instructor? Instructor { get; set; }
 
     public ICollection<UserRole> UserRoles { get; set; } = new List<UserRole>();
+
+    public ICollection<PasswordResetOtp> PasswordResetOtps { get; set; } = new List<PasswordResetOtp>();
 }

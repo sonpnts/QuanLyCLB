@@ -168,6 +168,7 @@ public class InstructorService : IInstructorService
         //userAccount.Username = email;
         userAccount.Email = email;
         //userAccount.FullName = fullName;
+        userAccount.AvatarUrl = null;
 
         var instructor = await _dbContext.Instructors
             .Include(x => x.User)

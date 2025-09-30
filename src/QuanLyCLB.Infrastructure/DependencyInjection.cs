@@ -34,6 +34,7 @@ public static class DependencyInjection
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<ILoginAuditService, LoginAuditService>();
         services.AddScoped<IEmailService, SmtpEmailService>();
+        services.AddScoped<IUserService, UserService>();
         services.AddScoped<IGoogleTokenValidator, GoogleTokenValidator>();
         services.AddSingleton<IJwtTokenService, JwtTokenService>();
 
