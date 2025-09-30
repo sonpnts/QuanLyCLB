@@ -26,5 +26,6 @@
   <ItemGroup>
     <ProjectReference Include="../QuanLyCLB.Application/QuanLyCLB.Application.csproj" />
     <ProjectReference Include="../QuanLyCLB.Infrastructure/QuanLyCLB.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\Common\Common.csproj" />
   </ItemGroup>
 </Project>

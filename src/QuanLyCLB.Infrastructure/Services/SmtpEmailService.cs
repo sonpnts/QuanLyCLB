@@ -6,14 +6,9 @@ using QuanLyCLB.Infrastructure.Settings;
 
 namespace QuanLyCLB.Infrastructure.Services;
 
-public class SmtpEmailService : IEmailService
+public class SmtpEmailService(IOptions<SmtpSettings> options) : IEmailService
 {
-    private readonly SmtpSettings _settings;
-
-    public SmtpEmailService(IOptions<SmtpSettings> options)
-    {
-        _settings = options.Value;
-    }
+    private readonly SmtpSettings _settings = options.Value;
 
     public async Task SendEmailAsync(
         string to,
@@ -27,19 +22,17 @@ public class SmtpEmailService : IEmailService
             throw new InvalidOperationException("SMTP settings are not configured.");
         }
 
-        using var message = new MailMessage
-        {
-            From = new MailAddress(
-                string.IsNullOrWhiteSpace(_settings.FromEmail)
-                    ? _settings.Username
-                    : _settings.FromEmail,
-                string.IsNullOrWhiteSpace(_settings.FromName)
-                    ? _settings.FromEmail
-                    : _settings.FromName),
-            Subject = subject,
-            Body = body,
-            IsBodyHtml = isHtml
-        };
+        using var message = new MailMessage();
+        message.From = new MailAddress(
+            string.IsNullOrWhiteSpace(_settings.FromEmail)
+                ? _settings.Username
+                : _settings.FromEmail,
+            string.IsNullOrWhiteSpace(_settings.FromName)
+                ? _settings.FromEmail
+                : _settings.FromName);
+        message.Subject = subject;
+        message.Body = body;
+        message.IsBodyHtml = isHtml;
 
         message.To.Add(new MailAddress(to));
 
@@ -49,7 +42,7 @@ public class SmtpEmailService : IEmailService
             Credentials = new NetworkCredential(_settings.Username, _settings.Password)
         };
 
-        using var registration = cancellationToken.Register(client.SendAsyncCancel);
-        await client.SendMailAsync(message);
+        await using var registration = cancellationToken.Register(client.SendAsyncCancel);
+        await client.SendMailAsync(message, cancellationToken);
     }
 }

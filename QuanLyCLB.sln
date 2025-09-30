@@ -8,6 +8,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuanLyCLB.Application", "sr
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuanLyCLB.Infrastructure", "src\QuanLyCLB.Infrastructure\QuanLyCLB.Infrastructure.csproj", "{8F471C60-71B6-462A-A285-3F59F1AB32BA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common", "Common\Common.csproj", "{0FD3F471-1A46-4C91-92CE-FF63E5C2B10B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -26,6 +28,10 @@ Global
 		{8F471C60-71B6-462A-A285-3F59F1AB32BA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8F471C60-71B6-462A-A285-3F59F1AB32BA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8F471C60-71B6-462A-A285-3F59F1AB32BA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0FD3F471-1A46-4C91-92CE-FF63E5C2B10B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0FD3F471-1A46-4C91-92CE-FF63E5C2B10B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0FD3F471-1A46-4C91-92CE-FF63E5C2B10B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0FD3F471-1A46-4C91-92CE-FF63E5C2B10B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -12,7 +12,7 @@ using QuanLyCLB.Infrastructure.Persistence;
 namespace QuanLyCLB.Infrastructure.Migrations
 {
     [DbContext(typeof(ClubManagementDbContext))]
-    [Migration("20250929070118_InitialCreate")]
+    [Migration("20250930041203_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -172,10 +172,6 @@ namespace QuanLyCLB.Infrastructure.Migrations
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
 
-                    b.Property<string>("GooglePlaceId")
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
-
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
@@ -293,6 +289,116 @@ namespace QuanLyCLB.Infrastructure.Migrations
                         .IsUnique();
 
                     b.ToTable("Instructors", (string)null);
+                });
+
+            modelBuilder.Entity("QuanLyCLB.Application.Entities.LoginAuditLog", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("ApiEndpoint")
+                        .IsRequired()
+                        .HasMaxLength(400)
+                        .HasColumnType("nvarchar(400)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("SYSUTCDATETIME()");
+
+                    b.Property<Guid?>("CreatedByUserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("DeviceInfo")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("IpAddress")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<bool>("IsSuccess")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("LocationAddress")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("Message")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("Provider")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("UpdatedByUserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("UserAccountId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Username")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserAccountId");
+
+                    b.ToTable("LoginAuditLogs", (string)null);
+                });
+
+            modelBuilder.Entity("QuanLyCLB.Application.Entities.PasswordResetOtp", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("CodeHash")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("SYSUTCDATETIME()");
+
+                    b.Property<Guid?>("CreatedByUserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("ExpiresAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsUsed")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("UpdatedByUserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("UserAccountId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("VerifiedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserAccountId", "IsUsed");
+
+                    b.ToTable("PasswordResetOtps", (string)null);
                 });
 
             modelBuilder.Entity("QuanLyCLB.Application.Entities.PayrollDetail", b =>
@@ -495,6 +601,10 @@ namespace QuanLyCLB.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<string>("AvatarUrl")
+                        .HasMaxLength(1024)
+                        .HasColumnType("nvarchar(1024)");
+
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
@@ -523,8 +633,12 @@ namespace QuanLyCLB.Infrastructure.Migrations
                         .HasDefaultValue(true);
 
                     b.Property<string>("PasswordHash")
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
+                        .HasMaxLength(512)
+                        .HasColumnType("nvarchar(512)");
+
+                    b.Property<string>("PasswordSalt")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
 
                     b.Property<string>("PhoneNumber")
                         .IsRequired()
@@ -657,6 +771,27 @@ namespace QuanLyCLB.Infrastructure.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("QuanLyCLB.Application.Entities.LoginAuditLog", b =>
+                {
+                    b.HasOne("QuanLyCLB.Application.Entities.UserAccount", "UserAccount")
+                        .WithMany()
+                        .HasForeignKey("UserAccountId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("UserAccount");
+                });
+
+            modelBuilder.Entity("QuanLyCLB.Application.Entities.PasswordResetOtp", b =>
+                {
+                    b.HasOne("QuanLyCLB.Application.Entities.UserAccount", "User")
+                        .WithMany("PasswordResetOtps")
+                        .HasForeignKey("UserAccountId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("QuanLyCLB.Application.Entities.PayrollDetail", b =>
                 {
                     b.HasOne("QuanLyCLB.Application.Entities.AttendanceRecord", "AttendanceRecord")
@@ -759,6 +894,8 @@ namespace QuanLyCLB.Infrastructure.Migrations
             modelBuilder.Entity("QuanLyCLB.Application.Entities.UserAccount", b =>
                 {
                     b.Navigation("Instructor");
+
+                    b.Navigation("PasswordResetOtps");
 
                     b.Navigation("UserRoles");
                 });

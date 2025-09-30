@@ -21,7 +21,6 @@ namespace QuanLyCLB.Infrastructure.Migrations
                     Latitude = table.Column<double>(type: "float", nullable: false),
                     Longitude = table.Column<double>(type: "float", nullable: false),
                     AllowedRadiusMeters = table.Column<double>(type: "float", nullable: false),
-                    GooglePlaceId = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: true),
                     GoogleMapsEmbedUrl = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
                     IsActive = table.Column<bool>(type: "bit", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "SYSUTCDATETIME()"),
@@ -60,8 +59,10 @@ namespace QuanLyCLB.Infrastructure.Migrations
                     Email = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
                     FullName = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
                     PhoneNumber = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    AvatarUrl = table.Column<string>(type: "nvarchar(1024)", maxLength: 1024, nullable: true),
                     GoogleSubject = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: true),
-                    PasswordHash = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: true),
+                    PasswordHash = table.Column<string>(type: "nvarchar(512)", maxLength: 512, nullable: true),
+                    PasswordSalt = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     IsActive = table.Column<bool>(type: "bit", nullable: false, defaultValue: true),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "SYSUTCDATETIME()"),
                     CreatedByUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
@@ -91,6 +92,62 @@ namespace QuanLyCLB.Infrastructure.Migrations
                     table.PrimaryKey("PK_Instructors", x => x.Id);
                     table.ForeignKey(
                         name: "FK_Instructors_Users_UserAccountId",
+                        column: x => x.UserAccountId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "LoginAuditLogs",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    UserAccountId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    Username = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
+                    Provider = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    IsSuccess = table.Column<bool>(type: "bit", nullable: false),
+                    ApiEndpoint = table.Column<string>(type: "nvarchar(400)", maxLength: 400, nullable: false),
+                    LocationAddress = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
+                    DeviceInfo = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
+                    IpAddress = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    Message = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "SYSUTCDATETIME()"),
+                    CreatedByUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    UpdatedByUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_LoginAuditLogs", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_LoginAuditLogs_Users_UserAccountId",
+                        column: x => x.UserAccountId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.SetNull);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "PasswordResetOtps",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    UserAccountId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CodeHash = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
+                    ExpiresAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    VerifiedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    IsUsed = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "SYSUTCDATETIME()"),
+                    CreatedByUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    UpdatedByUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PasswordResetOtps", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_PasswordResetOtps_Users_UserAccountId",
                         column: x => x.UserAccountId,
                         principalTable: "Users",
                         principalColumn: "Id",
@@ -381,6 +438,16 @@ namespace QuanLyCLB.Infrastructure.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_LoginAuditLogs_UserAccountId",
+                table: "LoginAuditLogs",
+                column: "UserAccountId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PasswordResetOtps_UserAccountId_IsUsed",
+                table: "PasswordResetOtps",
+                columns: new[] { "UserAccountId", "IsUsed" });
+
+            migrationBuilder.CreateIndex(
                 name: "IX_PayrollDetails_AttendanceRecordId",
                 table: "PayrollDetails",
                 column: "AttendanceRecordId");
@@ -434,6 +501,12 @@ namespace QuanLyCLB.Infrastructure.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "LoginAuditLogs");
+
+            migrationBuilder.DropTable(
+                name: "PasswordResetOtps");
+
             migrationBuilder.DropTable(
                 name: "PayrollDetails");
 

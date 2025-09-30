@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using Common.Helpers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
@@ -41,6 +42,8 @@ public class AuthController : ControllerBase
     {
         var apiEndpoint = HttpContext.Request.Path;
         var ipAddress = HttpContext.Connection.RemoteIpAddress?.ToString();
+        var location = await GeoLocationHelper.GetLocationFromIpAsync(ipAddress);
+        var deviceInfo = Request.Headers["User-Agent"].ToString();
         const string provider = "Google";
 
         var googleUser = await _tokenValidator.ValidateAsync(request.IdToken, cancellationToken);
@@ -52,8 +55,8 @@ public class AuthController : ControllerBase
                 provider,
                 false,
                 apiEndpoint,
-                request.LocationAddress,
-                request.DeviceInfo,
+                location,
+                deviceInfo,
                 ipAddress,
                 "Invalid Google token",
                 cancellationToken);
@@ -73,8 +76,8 @@ public class AuthController : ControllerBase
                 provider,
                 false,
                 apiEndpoint,
-                request.LocationAddress,
-                request.DeviceInfo,
+                location,
+                deviceInfo,
                 ipAddress,
                 ex.Message,
                 cancellationToken);
@@ -104,8 +107,8 @@ public class AuthController : ControllerBase
             provider,
             true,
             apiEndpoint,
-            request.LocationAddress,
-            request.DeviceInfo,
+            location,
+            deviceInfo,
             ipAddress,
             null,
             cancellationToken);
@@ -119,6 +122,8 @@ public class AuthController : ControllerBase
     {
         var apiEndpoint = HttpContext.Request.Path;
         var ipAddress = HttpContext.Connection.RemoteIpAddress?.ToString();
+        var location = await GeoLocationHelper.GetLocationFromIpAsync(ipAddress);
+        var deviceInfo = Request.Headers["User-Agent"].ToString();
         const string provider = "Password";
 
         InstructorAuthResult instructorResult;
@@ -134,8 +139,8 @@ public class AuthController : ControllerBase
                 provider,
                 false,
                 apiEndpoint,
-                request.LocationAddress,
-                request.DeviceInfo,
+                location,
+                deviceInfo,
                 ipAddress,
                 ex.Message,
                 cancellationToken);
@@ -166,8 +171,8 @@ public class AuthController : ControllerBase
             provider,
             true,
             apiEndpoint,
-            request.LocationAddress,
-            request.DeviceInfo,
+            location,
+            deviceInfo,
             ipAddress,
             null,
             cancellationToken);
