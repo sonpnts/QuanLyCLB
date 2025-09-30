@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using QuanLyCLB.Application.DTOs;
 using QuanLyCLB.Application.Entities;
 
@@ -6,6 +7,21 @@ namespace QuanLyCLB.Application.Mappings;
 
 public static class EntityDtoMappingExtensions
 {
+    public static UserDto ToDto(this UserAccount entity) => new(
+        entity.Id,
+        entity.Username,
+        entity.Email,
+        entity.FullName,
+        entity.PhoneNumber,
+        entity.AvatarUrl,
+        entity.IsActive,
+        !string.IsNullOrWhiteSpace(entity.PasswordHash),
+        !string.IsNullOrWhiteSpace(entity.GoogleSubject),
+        entity.UserRoles
+            .Select(x => x.Role.Name)
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .ToList());
+
     public static InstructorDto ToDto(this Instructor entity) => new(
         entity.Id,
         entity.User.FullName,
