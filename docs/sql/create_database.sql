@@ -19,9 +19,14 @@ BEGIN
         Id UNIQUEIDENTIFIER NOT NULL PRIMARY KEY,
         Username NVARCHAR(200) NOT NULL,
         Email NVARCHAR(200) NOT NULL,
+        FullName NVARCHAR(200) NOT NULL,
+        PhoneNumber NVARCHAR(50) NOT NULL,
+        AvatarUrl NVARCHAR(1024) NULL,
         GoogleSubject NVARCHAR(200) NULL,
         PasswordHash NVARCHAR(512) NULL,
         PasswordSalt NVARCHAR(256) NULL,
+        SkillLevel NVARCHAR(200) NOT NULL DEFAULT '',
+        Certification NVARCHAR(500) NULL,
         CreatedAt DATETIME2 NOT NULL DEFAULT SYSUTCDATETIME(),
         UpdatedAt DATETIME2 NULL,
         CreatedByUserId UNIQUEIDENTIFIER NULL,
@@ -62,17 +67,16 @@ BEGIN
 END
 GO
 
--- Bảng lưu thông tin giảng viên
-IF OBJECT_ID(N'dbo.Instructors', N'U') IS NULL
+-- Bảng quy định tiền lương theo vai trò và trình độ
+IF OBJECT_ID(N'dbo.PayrollRules', N'U') IS NULL
 BEGIN
-    CREATE TABLE dbo.Instructors
+    CREATE TABLE dbo.PayrollRules
     (
         Id UNIQUEIDENTIFIER NOT NULL PRIMARY KEY,
-        UserAccountId UNIQUEIDENTIFIER NULL,
-        FullName NVARCHAR(200) NOT NULL,
-        Email NVARCHAR(200) NOT NULL,
-        PhoneNumber NVARCHAR(50) NULL,
+        RoleName NVARCHAR(100) NOT NULL,
+        SkillLevel NVARCHAR(200) NOT NULL,
         HourlyRate DECIMAL(18, 2) NOT NULL DEFAULT 0,
+        Notes NVARCHAR(1000) NULL,
         CreatedAt DATETIME2 NOT NULL DEFAULT SYSUTCDATETIME(),
         UpdatedAt DATETIME2 NULL,
         CreatedByUserId UNIQUEIDENTIFIER NULL,
@@ -80,12 +84,8 @@ BEGIN
         IsActive BIT NOT NULL DEFAULT 1
     );
 
-    CREATE UNIQUE INDEX IX_Instructors_Email ON dbo.Instructors(Email);
-
-    ALTER TABLE dbo.Instructors
-        ADD CONSTRAINT FK_Instructors_Users
-            FOREIGN KEY (UserAccountId) REFERENCES dbo.Users(Id)
-            ON DELETE SET NULL;
+    CREATE UNIQUE INDEX IX_PayrollRules_Role_Skill
+        ON dbo.PayrollRules(RoleName, SkillLevel);
 END
 GO
 
@@ -101,7 +101,7 @@ BEGIN
         StartDate DATE NOT NULL,
         EndDate DATE NULL,
         MaxStudents INT NOT NULL,
-        InstructorId UNIQUEIDENTIFIER NOT NULL,
+        CoachId UNIQUEIDENTIFIER NOT NULL,
         CreatedAt DATETIME2 NOT NULL DEFAULT SYSUTCDATETIME(),
         UpdatedAt DATETIME2 NULL,
         CreatedByUserId UNIQUEIDENTIFIER NULL,
@@ -110,8 +110,8 @@ BEGIN
     );
 
     ALTER TABLE dbo.TrainingClasses
-        ADD CONSTRAINT FK_TrainingClasses_Instructors
-            FOREIGN KEY (InstructorId) REFERENCES dbo.Instructors(Id)
+        ADD CONSTRAINT FK_TrainingClasses_Users
+            FOREIGN KEY (CoachId) REFERENCES dbo.Users(Id)
             ON DELETE NO ACTION;
 
     CREATE UNIQUE INDEX IX_TrainingClasses_Code ON dbo.TrainingClasses(Code);
@@ -178,6 +178,52 @@ BEGIN
 END
 GO
 
+-- Bảng phân công trợ giảng cho lớp và lịch học
+IF OBJECT_ID(N'dbo.ClassAssistantAssignments', N'U') IS NULL
+BEGIN
+    CREATE TABLE dbo.ClassAssistantAssignments
+    (
+        Id UNIQUEIDENTIFIER NOT NULL PRIMARY KEY,
+        TrainingClassId UNIQUEIDENTIFIER NOT NULL,
+        ClassScheduleId UNIQUEIDENTIFIER NULL,
+        AssistantId UNIQUEIDENTIFIER NOT NULL,
+        RoleName NVARCHAR(100) NOT NULL,
+        StartDate DATE NOT NULL,
+        EndDate DATE NULL,
+        Notes NVARCHAR(1000) NULL,
+        CreatedAt DATETIME2 NOT NULL DEFAULT SYSUTCDATETIME(),
+        UpdatedAt DATETIME2 NULL,
+        CreatedByUserId UNIQUEIDENTIFIER NULL,
+        UpdatedByUserId UNIQUEIDENTIFIER NULL,
+        IsActive BIT NOT NULL DEFAULT 1
+    );
+
+    ALTER TABLE dbo.ClassAssistantAssignments
+        ADD CONSTRAINT FK_ClassAssistantAssignments_TrainingClasses
+            FOREIGN KEY (TrainingClassId) REFERENCES dbo.TrainingClasses(Id)
+            ON DELETE CASCADE;
+
+    ALTER TABLE dbo.ClassAssistantAssignments
+        ADD CONSTRAINT FK_ClassAssistantAssignments_ClassSchedules
+            FOREIGN KEY (ClassScheduleId) REFERENCES dbo.ClassSchedules(Id)
+            ON DELETE CASCADE;
+
+    ALTER TABLE dbo.ClassAssistantAssignments
+        ADD CONSTRAINT FK_ClassAssistantAssignments_Users
+            FOREIGN KEY (AssistantId) REFERENCES dbo.Users(Id)
+            ON DELETE NO ACTION;
+
+    CREATE INDEX IX_ClassAssistantAssignments_AssistantId
+        ON dbo.ClassAssistantAssignments(AssistantId);
+
+    CREATE INDEX IX_ClassAssistantAssignments_ClassScheduleId
+        ON dbo.ClassAssistantAssignments(ClassScheduleId);
+
+    CREATE INDEX IX_ClassAssistantAssignments_TrainingClassId
+        ON dbo.ClassAssistantAssignments(TrainingClassId);
+END
+GO
+
 -- Bảng phiếu hỗ trợ/điều chỉnh điểm danh
 IF OBJECT_ID(N'dbo.AttendanceTickets', N'U') IS NULL
 BEGIN
@@ -185,7 +231,7 @@ BEGIN
     (
         Id UNIQUEIDENTIFIER NOT NULL PRIMARY KEY,
         ClassScheduleId UNIQUEIDENTIFIER NOT NULL,
-        InstructorId UNIQUEIDENTIFIER NOT NULL,
+        CoachId UNIQUEIDENTIFIER NOT NULL,
         Reason NVARCHAR(500) NOT NULL,
         CreatedBy NVARCHAR(200) NOT NULL,
         IsApproved BIT NOT NULL DEFAULT 0,
@@ -204,9 +250,12 @@ BEGIN
             ON DELETE CASCADE;
 
     ALTER TABLE dbo.AttendanceTickets
-        ADD CONSTRAINT FK_AttendanceTickets_Instructors
-            FOREIGN KEY (InstructorId) REFERENCES dbo.Instructors(Id)
+        ADD CONSTRAINT FK_AttendanceTickets_Users
+            FOREIGN KEY (CoachId) REFERENCES dbo.Users(Id)
             ON DELETE NO ACTION;
+
+    CREATE INDEX IX_AttendanceTickets_CoachId
+        ON dbo.AttendanceTickets(CoachId);
 END
 GO
 
@@ -217,7 +266,7 @@ BEGIN
     (
         Id UNIQUEIDENTIFIER NOT NULL PRIMARY KEY,
         ClassScheduleId UNIQUEIDENTIFIER NOT NULL,
-        InstructorId UNIQUEIDENTIFIER NOT NULL,
+        CoachId UNIQUEIDENTIFIER NOT NULL,
         CheckedInAt DATETIME2 NOT NULL,
         Latitude FLOAT NOT NULL,
         Longitude FLOAT NOT NULL,
@@ -237,8 +286,8 @@ BEGIN
             ON DELETE CASCADE;
 
     ALTER TABLE dbo.AttendanceRecords
-        ADD CONSTRAINT FK_AttendanceRecords_Instructors
-            FOREIGN KEY (InstructorId) REFERENCES dbo.Instructors(Id)
+        ADD CONSTRAINT FK_AttendanceRecords_Users
+            FOREIGN KEY (CoachId) REFERENCES dbo.Users(Id)
             ON DELETE NO ACTION;
 
     ALTER TABLE dbo.AttendanceRecords
@@ -249,6 +298,9 @@ BEGIN
     CREATE UNIQUE INDEX IX_AttendanceRecords_TicketId
         ON dbo.AttendanceRecords(TicketId)
         WHERE TicketId IS NOT NULL;
+
+    CREATE INDEX IX_AttendanceRecords_CoachId
+        ON dbo.AttendanceRecords(CoachId);
 END
 GO
 
@@ -258,7 +310,7 @@ BEGIN
     CREATE TABLE dbo.PayrollPeriods
     (
         Id UNIQUEIDENTIFIER NOT NULL PRIMARY KEY,
-        InstructorId UNIQUEIDENTIFIER NOT NULL,
+        CoachId UNIQUEIDENTIFIER NOT NULL,
         [Year] INT NOT NULL,
         [Month] INT NOT NULL,
         TotalHours DECIMAL(18, 2) NOT NULL DEFAULT 0,
@@ -272,12 +324,12 @@ BEGIN
     );
 
     ALTER TABLE dbo.PayrollPeriods
-        ADD CONSTRAINT FK_PayrollPeriods_Instructors
-            FOREIGN KEY (InstructorId) REFERENCES dbo.Instructors(Id)
+        ADD CONSTRAINT FK_PayrollPeriods_Users
+            FOREIGN KEY (CoachId) REFERENCES dbo.Users(Id)
             ON DELETE CASCADE;
 
-    CREATE UNIQUE INDEX IX_PayrollPeriods_PerInstructor
-        ON dbo.PayrollPeriods(InstructorId, [Year], [Month]);
+    CREATE UNIQUE INDEX IX_PayrollPeriods_PerCoach
+        ON dbo.PayrollPeriods(CoachId, [Year], [Month]);
 END
 GO
 

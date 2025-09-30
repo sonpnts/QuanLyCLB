@@ -25,16 +25,16 @@ public class PayrollController : ControllerBase
         return Ok(payroll);
     }
 
-    [HttpGet("instructor/{instructorId:guid}")]
+    [HttpGet("coach/{coachId:guid}")]
     [Authorize]
-    public async Task<ActionResult<IReadOnlyCollection<PayrollPeriodDto>>> GetForInstructor(Guid instructorId, CancellationToken cancellationToken)
+    public async Task<ActionResult<IReadOnlyCollection<PayrollPeriodDto>>> GetForCoach(Guid coachId, CancellationToken cancellationToken)
     {
-        if (!User.IsInRole("Admin") && !TryValidateInstructor(instructorId))
+        if (!User.IsInRole("Admin") && !TryValidateCoach(coachId))
         {
             return Forbid();
         }
 
-        var payrolls = await _payrollService.GetPayrollsAsync(instructorId, cancellationToken);
+        var payrolls = await _payrollService.GetPayrollsAsync(coachId, cancellationToken);
         return Ok(payrolls);
     }
 
@@ -46,9 +46,9 @@ public class PayrollController : ControllerBase
         return payroll is not null ? Ok(payroll) : NotFound();
     }
 
-    private bool TryValidateInstructor(Guid instructorId)
+    private bool TryValidateCoach(Guid coachId)
     {
         var claimValue = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        return Guid.TryParse(claimValue, out var currentId) && currentId == instructorId;
+        return Guid.TryParse(claimValue, out var currentId) && currentId == coachId;
     }
 }

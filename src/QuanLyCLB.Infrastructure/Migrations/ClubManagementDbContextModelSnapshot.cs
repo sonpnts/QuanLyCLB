@@ -42,7 +42,7 @@ namespace QuanLyCLB.Infrastructure.Migrations
                     b.Property<Guid?>("CreatedByUserId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("InstructorId")
+                    b.Property<Guid>("CoachId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("IsActive")
@@ -77,7 +77,7 @@ namespace QuanLyCLB.Infrastructure.Migrations
 
                     b.HasIndex("ClassScheduleId");
 
-                    b.HasIndex("InstructorId");
+                    b.HasIndex("CoachId");
 
                     b.HasIndex("TicketId")
                         .IsUnique()
@@ -114,7 +114,7 @@ namespace QuanLyCLB.Infrastructure.Migrations
                     b.Property<Guid?>("CreatedByUserId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("InstructorId")
+                    b.Property<Guid>("CoachId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("IsActive")
@@ -138,7 +138,7 @@ namespace QuanLyCLB.Infrastructure.Migrations
 
                     b.HasIndex("ClassScheduleId");
 
-                    b.HasIndex("InstructorId");
+                    b.HasIndex("CoachId");
 
                     b.ToTable("AttendanceTickets", (string)null);
                 });
@@ -248,10 +248,16 @@ namespace QuanLyCLB.Infrastructure.Migrations
                     b.ToTable("ClassSchedules", (string)null);
                 });
 
-            modelBuilder.Entity("QuanLyCLB.Application.Entities.Instructor", b =>
+            modelBuilder.Entity("QuanLyCLB.Application.Entities.ClassAssistantAssignment", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("AssistantId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("ClassScheduleId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("CreatedAt")
@@ -262,14 +268,27 @@ namespace QuanLyCLB.Infrastructure.Migrations
                     b.Property<Guid?>("CreatedByUserId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<decimal>("HourlyRate")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<DateOnly>("EndDate")
+                        .HasColumnType("date");
 
                     b.Property<bool>("IsActive")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(true);
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Notes")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<string>("RoleName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateOnly>("StartDate")
+                        .HasColumnType("date");
+
+                    b.Property<Guid>("TrainingClassId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
@@ -277,15 +296,15 @@ namespace QuanLyCLB.Infrastructure.Migrations
                     b.Property<Guid?>("UpdatedByUserId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("UserAccountId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.HasKey("Id");
 
-                    b.HasIndex("UserAccountId")
-                        .IsUnique();
+                    b.HasIndex("AssistantId");
 
-                    b.ToTable("Instructors", (string)null);
+                    b.HasIndex("ClassScheduleId");
+
+                    b.HasIndex("TrainingClassId");
+
+                    b.ToTable("ClassAssistantAssignments", (string)null);
                 });
 
             modelBuilder.Entity("QuanLyCLB.Application.Entities.LoginAuditLog", b =>
@@ -350,6 +369,57 @@ namespace QuanLyCLB.Infrastructure.Migrations
                     b.HasIndex("UserAccountId");
 
                     b.ToTable("LoginAuditLogs", (string)null);
+                });
+
+            modelBuilder.Entity("QuanLyCLB.Application.Entities.PayrollRule", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("SYSUTCDATETIME()");
+
+                    b.Property<Guid?>("CreatedByUserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("IsActive")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
+
+                    b.Property<decimal>("HourlyRate")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("Notes")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<string>("RoleName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("SkillLevel")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("UpdatedByUserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RoleName", "SkillLevel")
+                        .IsUnique();
+
+                    b.ToTable("PayrollRules", (string)null);
                 });
 
             modelBuilder.Entity("QuanLyCLB.Application.Entities.PasswordResetOtp", b =>
@@ -461,7 +531,7 @@ namespace QuanLyCLB.Infrastructure.Migrations
                     b.Property<DateTime>("GeneratedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid>("InstructorId")
+                    b.Property<Guid>("CoachId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("IsActive")
@@ -489,7 +559,7 @@ namespace QuanLyCLB.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("InstructorId", "Year", "Month")
+                    b.HasIndex("CoachId", "Year", "Month")
                         .IsUnique();
 
                     b.ToTable("PayrollPeriods", (string)null);
@@ -559,7 +629,7 @@ namespace QuanLyCLB.Infrastructure.Migrations
                     b.Property<DateOnly?>("EndDate")
                         .HasColumnType("date");
 
-                    b.Property<Guid>("InstructorId")
+                    b.Property<Guid>("CoachId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("IsActive")
@@ -587,7 +657,7 @@ namespace QuanLyCLB.Infrastructure.Migrations
                     b.HasIndex("Code")
                         .IsUnique();
 
-                    b.HasIndex("InstructorId");
+                    b.HasIndex("CoachId");
 
                     b.ToTable("TrainingClasses", (string)null);
                 });
@@ -636,6 +706,16 @@ namespace QuanLyCLB.Infrastructure.Migrations
                     b.Property<string>("PasswordSalt")
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("SkillLevel")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)")
+                        .HasDefaultValue("");
+
+                    b.Property<string>("Certification")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
 
                     b.Property<string>("PhoneNumber")
                         .IsRequired()
@@ -701,9 +781,9 @@ namespace QuanLyCLB.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("QuanLyCLB.Application.Entities.Instructor", "Instructor")
-                        .WithMany("AttendanceRecords")
-                        .HasForeignKey("InstructorId")
+                    b.HasOne("QuanLyCLB.Application.Entities.UserAccount", "Coach")
+                        .WithMany()
+                        .HasForeignKey("CoachId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
@@ -714,7 +794,7 @@ namespace QuanLyCLB.Infrastructure.Migrations
 
                     b.Navigation("ClassSchedule");
 
-                    b.Navigation("Instructor");
+                    b.Navigation("Coach");
 
                     b.Navigation("Ticket");
                 });
@@ -727,15 +807,15 @@ namespace QuanLyCLB.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("QuanLyCLB.Application.Entities.Instructor", "Instructor")
+                    b.HasOne("QuanLyCLB.Application.Entities.UserAccount", "Coach")
                         .WithMany()
-                        .HasForeignKey("InstructorId")
+                        .HasForeignKey("CoachId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("ClassSchedule");
 
-                    b.Navigation("Instructor");
+                    b.Navigation("Coach");
                 });
 
             modelBuilder.Entity("QuanLyCLB.Application.Entities.ClassSchedule", b =>
@@ -755,17 +835,6 @@ namespace QuanLyCLB.Infrastructure.Migrations
                     b.Navigation("Branch");
 
                     b.Navigation("TrainingClass");
-                });
-
-            modelBuilder.Entity("QuanLyCLB.Application.Entities.Instructor", b =>
-                {
-                    b.HasOne("QuanLyCLB.Application.Entities.UserAccount", "User")
-                        .WithOne("Instructor")
-                        .HasForeignKey("QuanLyCLB.Application.Entities.Instructor", "UserAccountId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("QuanLyCLB.Application.Entities.LoginAuditLog", b =>
@@ -810,24 +879,24 @@ namespace QuanLyCLB.Infrastructure.Migrations
 
             modelBuilder.Entity("QuanLyCLB.Application.Entities.PayrollPeriod", b =>
                 {
-                    b.HasOne("QuanLyCLB.Application.Entities.Instructor", "Instructor")
-                        .WithMany("Payrolls")
-                        .HasForeignKey("InstructorId")
+                    b.HasOne("QuanLyCLB.Application.Entities.UserAccount", "Coach")
+                        .WithMany()
+                        .HasForeignKey("CoachId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Instructor");
+                    b.Navigation("Coach");
                 });
 
             modelBuilder.Entity("QuanLyCLB.Application.Entities.TrainingClass", b =>
                 {
-                    b.HasOne("QuanLyCLB.Application.Entities.Instructor", "Instructor")
-                        .WithMany("Classes")
-                        .HasForeignKey("InstructorId")
+                    b.HasOne("QuanLyCLB.Application.Entities.UserAccount", "Coach")
+                        .WithMany()
+                        .HasForeignKey("CoachId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.Navigation("Instructor");
+                    b.Navigation("Coach");
                 });
 
             modelBuilder.Entity("QuanLyCLB.Application.Entities.UserRole", b =>
@@ -864,13 +933,30 @@ namespace QuanLyCLB.Infrastructure.Migrations
                     b.Navigation("AttendanceRecords");
                 });
 
-            modelBuilder.Entity("QuanLyCLB.Application.Entities.Instructor", b =>
+            modelBuilder.Entity("QuanLyCLB.Application.Entities.ClassAssistantAssignment", b =>
                 {
-                    b.Navigation("AttendanceRecords");
+                    b.HasOne("QuanLyCLB.Application.Entities.UserAccount", "Assistant")
+                        .WithMany()
+                        .HasForeignKey("AssistantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
-                    b.Navigation("Classes");
+                    b.HasOne("QuanLyCLB.Application.Entities.ClassSchedule", "ClassSchedule")
+                        .WithMany()
+                        .HasForeignKey("ClassScheduleId")
+                        .OnDelete(DeleteBehavior.Cascade);
 
-                    b.Navigation("Payrolls");
+                    b.HasOne("QuanLyCLB.Application.Entities.TrainingClass", "TrainingClass")
+                        .WithMany("AssistantAssignments")
+                        .HasForeignKey("TrainingClassId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Assistant");
+
+                    b.Navigation("ClassSchedule");
+
+                    b.Navigation("TrainingClass");
                 });
 
             modelBuilder.Entity("QuanLyCLB.Application.Entities.PayrollPeriod", b =>
@@ -886,12 +972,12 @@ namespace QuanLyCLB.Infrastructure.Migrations
             modelBuilder.Entity("QuanLyCLB.Application.Entities.TrainingClass", b =>
                 {
                     b.Navigation("Schedules");
+
+                    b.Navigation("AssistantAssignments");
                 });
 
             modelBuilder.Entity("QuanLyCLB.Application.Entities.UserAccount", b =>
                 {
-                    b.Navigation("Instructor");
-
                     b.Navigation("PasswordResetOtps");
 
                     b.Navigation("UserRoles");

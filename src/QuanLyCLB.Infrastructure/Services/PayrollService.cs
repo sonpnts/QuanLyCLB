@@ -24,15 +24,28 @@ public class PayrollService : IPayrollService
 
     public async Task<PayrollPeriodDto> GeneratePayrollAsync(GeneratePayrollRequest request, CancellationToken cancellationToken = default)
     {
-        var instructor = await _dbContext.Instructors.FirstOrDefaultAsync(i => i.Id == request.InstructorId, cancellationToken)
-            ?? throw new InvalidOperationException("Instructor not found");
+        var coach = await _dbContext.Users
+            .Include(x => x.UserRoles)
+                .ThenInclude(x => x.Role)
+            .FirstOrDefaultAsync(i => i.Id == request.CoachId, cancellationToken)
+            ?? throw new InvalidOperationException("Coach not found");
+
+        if (!coach.UserRoles.Any(r => r.Role.Name == "Coach"))
+        {
+            throw new InvalidOperationException("User does not have the Coach role");
+        }
+
+        var payrollRule = await _dbContext.PayrollRules
+            .AsNoTracking()
+            .FirstOrDefaultAsync(r => r.RoleName == "Coach" && r.SkillLevel == coach.SkillLevel, cancellationToken)
+            ?? throw new InvalidOperationException("Payroll rule not configured for coach skill level");
 
         var monthStart = DateTime.SpecifyKind(new DateTime(request.Year, request.Month, 1, 0, 0, 0), DateTimeKind.Utc);
         var monthEnd = monthStart.AddMonths(1).AddTicks(-1);
 
         var attendanceRecords = await _dbContext.AttendanceRecords
             .Include(a => a.ClassSchedule)
-            .Where(a => a.InstructorId == request.InstructorId &&
+            .Where(a => a.CoachId == request.CoachId &&
                         a.CheckedInAt >= monthStart &&
                         a.CheckedInAt <= monthEnd &&
                         (a.Status == AttendanceStatus.Present || a.Status == AttendanceStatus.Late || a.Status == AttendanceStatus.Manual))
@@ -49,7 +62,7 @@ public class PayrollService : IPayrollService
 
             var duration = attendance.ClassSchedule.EndTime - attendance.ClassSchedule.StartTime;
             var hours = (decimal)duration.TotalHours;
-            var amount = hours * instructor.HourlyRate;
+            var amount = hours * payrollRule.HourlyRate;
 
             totalHours += hours;
 
@@ -65,13 +78,13 @@ public class PayrollService : IPayrollService
 
         var payroll = await _dbContext.PayrollPeriods
             .Include(p => p.Details)
-            .FirstOrDefaultAsync(p => p.InstructorId == request.InstructorId && p.Year == request.Year && p.Month == request.Month, cancellationToken);
+            .FirstOrDefaultAsync(p => p.CoachId == request.CoachId && p.Year == request.Year && p.Month == request.Month, cancellationToken);
 
         if (payroll is null)
         {
             payroll = new PayrollPeriod
             {
-                InstructorId = request.InstructorId,
+                CoachId = request.CoachId,
                 Year = request.Year,
                 Month = request.Month
             };
@@ -94,11 +107,11 @@ public class PayrollService : IPayrollService
         return payroll.ToDto();
     }
 
-    public async Task<IReadOnlyCollection<PayrollPeriodDto>> GetPayrollsAsync(Guid instructorId, CancellationToken cancellationToken = default)
+    public async Task<IReadOnlyCollection<PayrollPeriodDto>> GetPayrollsAsync(Guid coachId, CancellationToken cancellationToken = default)
     {
         var payrolls = await _dbContext.PayrollPeriods
             .Include(p => p.Details)
-            .Where(p => p.InstructorId == instructorId)
+            .Where(p => p.CoachId == coachId)
             .OrderByDescending(p => p.Year)
             .ThenByDescending(p => p.Month)
             .ToListAsync(cancellationToken);

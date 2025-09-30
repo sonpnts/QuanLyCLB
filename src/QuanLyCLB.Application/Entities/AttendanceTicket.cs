@@ -9,8 +9,8 @@ public class AttendanceTicket : AuditableEntity
     public Guid Id { get; set; } = Guid.NewGuid();
     public Guid ClassScheduleId { get; set; }
     public ClassSchedule? ClassSchedule { get; set; }
-    public Guid InstructorId { get; set; }
-    public Instructor? Instructor { get; set; }
+    public Guid CoachId { get; set; }
+    public UserAccount? Coach { get; set; }
 
     public bool IsActive { get; set; } = true;
 

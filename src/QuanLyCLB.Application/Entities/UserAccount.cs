@@ -20,9 +20,11 @@ public class UserAccount : AuditableEntity
 
     public string? PasswordSalt { get; set; }
 
-    public bool IsActive { get; set; } = true;
+    public string SkillLevel { get; set; } = string.Empty;
 
-    public Instructor? Instructor { get; set; }
+    public string? Certification { get; set; }
+
+    public bool IsActive { get; set; } = true;
 
     public ICollection<UserRole> UserRoles { get; set; } = new List<UserRole>();
 

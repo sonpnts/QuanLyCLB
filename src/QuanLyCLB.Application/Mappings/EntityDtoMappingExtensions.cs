@@ -22,12 +22,13 @@ public static class EntityDtoMappingExtensions
             .Distinct(StringComparer.OrdinalIgnoreCase)
             .ToList());
 
-    public static InstructorDto ToDto(this Instructor entity) => new(
+    public static InstructorDto ToInstructorDto(this UserAccount entity) => new(
         entity.Id,
-        entity.User.FullName,
-        entity.User.Email,
-        entity.User.PhoneNumber,
-        entity.HourlyRate,
+        entity.FullName,
+        entity.Email,
+        entity.PhoneNumber,
+        entity.SkillLevel,
+        entity.Certification,
         entity.IsActive);
 
     public static TrainingClassDto ToDto(this TrainingClass entity) => new(
@@ -38,7 +39,7 @@ public static class EntityDtoMappingExtensions
         entity.StartDate,
         entity.EndDate,
         entity.MaxStudents,
-        entity.InstructorId);
+        entity.CoachId);
 
     public static BranchDto ToDto(this Branch entity) => new(
         entity.Id,
@@ -61,7 +62,7 @@ public static class EntityDtoMappingExtensions
     public static AttendanceRecordDto ToDto(this AttendanceRecord entity) => new(
         entity.Id,
         entity.ClassScheduleId,
-        entity.InstructorId,
+        entity.CoachId,
         entity.CheckedInAt,
         entity.Latitude,
         entity.Longitude,
@@ -72,7 +73,7 @@ public static class EntityDtoMappingExtensions
     public static AttendanceTicketDto ToDto(this AttendanceTicket entity) => new(
         entity.Id,
         entity.ClassScheduleId,
-        entity.InstructorId,
+        entity.CoachId,
         entity.CreatedAt,
         entity.Reason,
         entity.CreatedBy,
@@ -85,7 +86,7 @@ public static class EntityDtoMappingExtensions
 
     public static PayrollPeriodDto ToDto(this PayrollPeriod entity) => new(
         entity.Id,
-        entity.InstructorId,
+        entity.CoachId,
         entity.Year,
         entity.Month,
         entity.TotalHours,

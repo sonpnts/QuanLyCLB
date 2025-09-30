@@ -24,9 +24,9 @@ public class AttendanceRecordConfiguration : IEntityTypeConfiguration<Attendance
             .HasForeignKey(x => x.ClassScheduleId)
             .OnDelete(DeleteBehavior.Restrict);
 
-        builder.HasOne(x => x.Instructor)
-            .WithMany(i => i.AttendanceRecords)
-            .HasForeignKey(x => x.InstructorId)
+        builder.HasOne(x => x.Coach)
+            .WithMany()
+            .HasForeignKey(x => x.CoachId)
             .OnDelete(DeleteBehavior.Restrict);
 
         builder.HasOne(x => x.Ticket)

@@ -18,9 +18,9 @@ public class AttendanceTicketConfiguration : IEntityTypeConfiguration<Attendance
             .HasForeignKey(x => x.ClassScheduleId)
             .OnDelete(DeleteBehavior.Cascade);
 
-        builder.HasOne(x => x.Instructor)
+        builder.HasOne(x => x.Coach)
             .WithMany()
-            .HasForeignKey(x => x.InstructorId)
+            .HasForeignKey(x => x.CoachId)
             .OnDelete(DeleteBehavior.Restrict);
     }
 }

@@ -18,10 +18,10 @@ public class AttendanceController : ControllerBase
     }
 
     [HttpPost("check-in")]
-    [Authorize(Policy = "InstructorOnly")]
+    [Authorize(Policy = "CoachOnly")]
     public async Task<ActionResult<AttendanceRecordDto>> CheckIn([FromBody] CheckInRequest request, CancellationToken cancellationToken)
     {
-        if (!TryValidateInstructor(request.InstructorId))
+        if (!TryValidateCoach(request.CoachId))
         {
             return Forbid();
         }
@@ -38,24 +38,24 @@ public class AttendanceController : ControllerBase
         return Ok(record);
     }
 
-    [HttpGet("instructor/{instructorId:guid}")]
+    [HttpGet("coach/{coachId:guid}")]
     [Authorize]
-    public async Task<ActionResult<IReadOnlyCollection<AttendanceRecordDto>>> GetInstructorAttendance(Guid instructorId, [FromQuery] DateOnly fromDate, [FromQuery] DateOnly toDate, CancellationToken cancellationToken)
+    public async Task<ActionResult<IReadOnlyCollection<AttendanceRecordDto>>> GetCoachAttendance(Guid coachId, [FromQuery] DateOnly fromDate, [FromQuery] DateOnly toDate, CancellationToken cancellationToken)
     {
-        if (!User.IsInRole("Admin") && !TryValidateInstructor(instructorId))
+        if (!User.IsInRole("Admin") && !TryValidateCoach(coachId))
         {
             return Forbid();
         }
 
-        var records = await _attendanceService.GetAttendanceByInstructorAsync(instructorId, fromDate, toDate, cancellationToken);
+        var records = await _attendanceService.GetAttendanceByCoachAsync(coachId, fromDate, toDate, cancellationToken);
         return Ok(records);
     }
 
     [HttpPost("tickets")]
-    [Authorize(Policy = "InstructorOnly")]
+    [Authorize(Policy = "CoachOnly")]
     public async Task<ActionResult<AttendanceTicketDto>> CreateTicket([FromBody] CreateTicketRequest request, CancellationToken cancellationToken)
     {
-        if (!TryValidateInstructor(request.InstructorId))
+        if (!TryValidateCoach(request.CoachId))
         {
             return Forbid();
         }
@@ -72,9 +72,9 @@ public class AttendanceController : ControllerBase
         return ticket is not null ? Ok(ticket) : NotFound();
     }
 
-    private bool TryValidateInstructor(Guid instructorId)
+    private bool TryValidateCoach(Guid coachId)
     {
         var claimValue = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        return Guid.TryParse(claimValue, out var currentId) && currentId == instructorId;
+        return Guid.TryParse(claimValue, out var currentId) && currentId == coachId;
     }
 }

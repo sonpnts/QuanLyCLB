@@ -29,8 +29,6 @@ public class AuthService : IAuthService
         var userAccount = await _dbContext.Users
             .Include(x => x.UserRoles)
                 .ThenInclude(x => x.Role)
-            .Include(x => x.Instructor)
-                .ThenInclude(x => x.User)
             .FirstOrDefaultAsync(x => x.Username == normalizedUsername || x.Email == normalizedUsername, cancellationToken);
 
         if (userAccount is null)
@@ -53,15 +51,9 @@ public class AuthService : IAuthService
             throw new InvalidOperationException("Invalid username or password.");
         }
 
-        var instructor = userAccount.Instructor;
-        if (instructor is null)
+        if (!userAccount.UserRoles.Any(r => string.Equals(r.Role.Name, "Coach", StringComparison.OrdinalIgnoreCase)))
         {
-            throw new InvalidOperationException("Instructor is not registered in the system.");
-        }
-
-        if (!instructor.IsActive)
-        {
-            throw new InvalidOperationException("Instructor account is disabled.");
+            throw new InvalidOperationException("Coach is not registered in the system.");
         }
 
         var roles = userAccount.UserRoles
@@ -69,7 +61,7 @@ public class AuthService : IAuthService
             .Distinct(StringComparer.OrdinalIgnoreCase)
             .ToList();
 
-        return new InstructorAuthResult(userAccount.Id, instructor.ToDto(), roles);
+        return new InstructorAuthResult(userAccount.Id, userAccount.ToInstructorDto(), roles);
     }
 
     public (string Hash, string Salt) HashPassword(string password)

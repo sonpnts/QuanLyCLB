@@ -16,14 +16,14 @@ Tài liệu này mô tả chi tiết các bước tích hợp với dịch vụ 
 
 1. Người dùng đăng nhập bằng Google để lấy `id_token` (OAuth2 Google Sign-In).
 2. Gửi `id_token` tới API `POST /api/auth/google`.
-3. Backend xác thực token với Google, đồng bộ thông tin giảng viên và sinh roles tương ứng.
+3. Backend xác thực token với Google, đồng bộ thông tin huấn luyện viên (Coach) và sinh roles tương ứng.
 4. Backend trả về `accessToken` (JWT) cùng ngày hết hạn. Các request tiếp theo cần gắn header:
    ```http
    Authorization: Bearer <accessToken>
    ```
-5. JWT chứa các role (`Admin`, `Instructor`, `TeachingAssistant`) và được kiểm soát bởi hai policy:
+5. JWT chứa các role (`Admin`, `Coach`, `Assistant`, `Student`) và được kiểm soát bởi hai policy:
    - `AdminOnly`: chỉ role `Admin`.
-   - `InstructorOnly`: `Instructor`, `TeachingAssistant` hoặc `Admin`.
+   - `CoachOnly`: `Coach`, `Assistant` hoặc `Admin`.
 
 Các endpoint dưới đây yêu cầu token hợp lệ trừ khi ghi chú khác.
 
@@ -38,7 +38,7 @@ Các endpoint dưới đây yêu cầu token hợp lệ trừ khi ghi chú khác
     "idToken": "<id_token_google>"
   }
   ```
-- **Response 200**:
+- **Response 200** (trong đó trường `instructor` đại diện cho thông tin Coach):
   ```json
   {
     "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
@@ -48,26 +48,27 @@ Các endpoint dưới đây yêu cầu token hợp lệ trừ khi ghi chú khác
       "fullName": "Nguyễn Văn A",
       "email": "giaovien@example.com",
       "phoneNumber": "+84901234567",
-      "hourlyRate": 150000,
+      "skillLevel": "Đai đen 1 đẳng",
+      "certification": "HLV Quốc gia",
       "isActive": true
     },
     "roles": [
-      "Instructor"
+      "Coach"
     ]
   }
   ```
 - **Response 401**: token Google không hợp lệ hoặc tài khoản bị từ chối.
 
-## 4. API giảng viên (`/api/instructors`)
+## 4. API huấn luyện viên (`/api/instructors`)
 
 > Các API này yêu cầu role `Admin`.
 
 ### GET `/api/instructors`
-- Lấy danh sách toàn bộ giảng viên.
+- Lấy danh sách toàn bộ huấn luyện viên.
 - **Response 200**: Mảng `InstructorDto`.
 
 ### GET `/api/instructors/{id}`
-- Lấy chi tiết một giảng viên.
+- Lấy chi tiết một huấn luyện viên.
 - **Response 200**:
   ```json
   {
@@ -75,40 +76,43 @@ Các endpoint dưới đây yêu cầu token hợp lệ trừ khi ghi chú khác
     "fullName": "...",
     "email": "...",
     "phoneNumber": "...",
-    "hourlyRate": 150000,
+    "skillLevel": "Đai nâu",
+    "certification": "Giấy chứng nhận HLV",
     "isActive": true
   }
   ```
 - **Response 404**: không tìm thấy.
 
 ### POST `/api/instructors`
-- Tạo giảng viên mới.
+- Tạo huấn luyện viên mới.
 - **Request**:
   ```json
   {
     "fullName": "Nguyễn Văn B",
     "email": "gvb@example.com",
     "phoneNumber": "+84987654321",
-    "hourlyRate": 180000
+    "skillLevel": "Đai đen 1 đẳng",
+    "certification": "Giấy chứng nhận HLV quốc gia"
   }
   ```
 - **Response 201**: đối tượng `InstructorDto` vừa tạo.
 
 ### PUT `/api/instructors/{id}`
-- Cập nhật thông tin giảng viên.
+- Cập nhật thông tin huấn luyện viên.
 - **Request**:
   ```json
   {
     "fullName": "Nguyễn Văn B",
     "phoneNumber": "+84987654321",
-    "hourlyRate": 200000,
+    "skillLevel": "Đai đen 2 đẳng",
+    "certification": "Giấy chứng nhận HLV quốc gia",
     "isActive": true
   }
   ```
 - **Response 200**: thông tin sau cập nhật. `404` nếu không tồn tại.
 
 ### DELETE `/api/instructors/{id}`
-- Xóa giảng viên.
+- Xóa huấn luyện viên.
 - **Response 204** nếu thành công, `404` nếu không tồn tại.
 
 ## 5. API lớp học (`/api/classes`)
@@ -132,7 +136,7 @@ Các endpoint dưới đây yêu cầu token hợp lệ trừ khi ghi chú khác
     "startDate": "2024-04-01",
     "endDate": "2024-06-30",
     "maxStudents": 20,
-    "instructorId": "..."
+    "coachId": "..."
   }
   ```
 - **Response 201**: `TrainingClassDto`.
@@ -163,6 +167,17 @@ Các endpoint dưới đây yêu cầu token hợp lệ trừ khi ghi chú khác
   - `classId` trong URL phải trùng `trainingClassId` trong body.
   - Mỗi phần tử trong `daysOfWeek` tương ứng với một bản ghi lịch cố định theo tuần. Ví dụ lớp học 3 buổi/tuần sẽ có đúng 3 bản ghi.
   - Nếu lớp đã có lịch cho ngày trong tuần được gửi lên, hệ thống sẽ cập nhật khung giờ và chi nhánh thay vì tạo bản ghi trùng lặp.
+
+### Ghi nhận phân công trợ giảng
+
+- Hệ thống sử dụng bảng `ClassAssistantAssignments` để lưu thông tin trợ giảng được gán cho từng lớp hoặc một buổi học cụ thể.
+- Các trường quan trọng:
+  - `trainingClassId`: lớp học được phân công.
+  - `classScheduleId`: (tùy chọn) lịch học cụ thể trong tuần.
+  - `assistantId`: khóa chính người dùng đảm nhiệm vai trò trợ giảng (`RoleName = Assistant`).
+  - `roleName`: giá trị mặc định là `Assistant`, có thể sử dụng các role khác nếu cần (`Student`, `Coach`, `Assistant`, `Admin`).
+  - `startDate`/`endDate`: thời gian hiệu lực của phân công.
+- Các API quản lý trợ giảng có thể được bổ sung sau; hiện tại dữ liệu có thể được thao tác qua migration/script tùy nhu cầu triển khai.
 
 ## 6. API chi nhánh (`/api/branches`)
 
@@ -216,12 +231,12 @@ Các endpoint dưới đây yêu cầu token hợp lệ trừ khi ghi chú khác
 ## 8. API điểm danh (`/api/attendance`)
 
 ### POST `/api/attendance/check-in`
-- **Phân quyền**: `InstructorOnly` (giảng viên tự điểm danh).
+- **Phân quyền**: `CoachOnly` (huấn luyện viên tự điểm danh).
 - **Request**:
   ```json
   {
     "classScheduleId": "...",
-    "instructorId": "...",  // phải trùng với instructor trong token
+    "coachId": "...",  // phải trùng với coach trong token
     "checkedInAt": "2024-04-02T10:05:00Z",
     "latitude": 10.762700,
     "longitude": 106.660200
@@ -229,7 +244,7 @@ Các endpoint dưới đây yêu cầu token hợp lệ trừ khi ghi chú khác
   ```
 - **Response 200**: `AttendanceRecordDto` chứa kết quả điểm danh.
 - **Lưu ý**: hệ thống tự động kiểm tra ngày điểm danh có cùng `dayOfWeek` với lịch và thời gian nằm trong khoảng thời gian lớp còn hiệu lực.
-- **Response 403**: nếu `instructorId` không khớp với token.
+- **Response 403**: nếu `coachId` không khớp với token.
 
 ### POST `/api/attendance/manual`
 - **Phân quyền**: `AdminOnly`.
@@ -237,7 +252,7 @@ Các endpoint dưới đây yêu cầu token hợp lệ trừ khi ghi chú khác
   ```json
   {
     "classScheduleId": "...",
-    "instructorId": "...",
+    "coachId": "...",
     "occurredAt": "2024-04-02T10:05:00Z",
     "status": "Present",
     "notes": "Điểm danh thủ công",
@@ -245,17 +260,17 @@ Các endpoint dưới đây yêu cầu token hợp lệ trừ khi ghi chú khác
   }
   ```
 
-### GET `/api/attendance/instructor/{instructorId}?fromDate=YYYY-MM-DD&toDate=YYYY-MM-DD`
-- **Phân quyền**: Người dùng phải là admin hoặc chính giảng viên đó.
+### GET `/api/attendance/coach/{coachId}?fromDate=YYYY-MM-DD&toDate=YYYY-MM-DD`
+- **Phân quyền**: Người dùng phải là admin hoặc chính huấn luyện viên đó.
 - **Response 200**: danh sách bản ghi điểm danh theo khoảng ngày.
 
 ### POST `/api/attendance/tickets`
-- **Phân quyền**: `InstructorOnly`.
+- **Phân quyền**: `CoachOnly`.
 - **Request**:
   ```json
   {
     "classScheduleId": "...",
-    "instructorId": "...",
+    "coachId": "...",
     "reason": "Vắng mặt do công tác",
     "createdBy": "Nguyễn Văn A",
     "createdByUserId": "..." // tùy chọn
@@ -280,19 +295,20 @@ Các endpoint dưới đây yêu cầu token hợp lệ trừ khi ghi chú khác
 
 ### POST `/api/payroll/generate`
 - **Phân quyền**: `AdminOnly`.
-- **Mục đích**: tổng hợp giờ dạy trong tháng cho một giảng viên.
+- **Mục đích**: tổng hợp giờ dạy trong tháng cho một huấn luyện viên.
 - **Request**:
   ```json
   {
-    "instructorId": "...",
+    "coachId": "...",
     "year": 2024,
     "month": 3
   }
   ```
 - **Response 200**: `PayrollPeriodDto` chứa tổng giờ, tổng tiền và chi tiết bản ghi điểm danh.
+- **Lưu ý**: mức lương theo giờ được tra cứu từ bảng `PayrollRules` dựa trên cặp (`RoleName`, `SkillLevel`). Cần đảm bảo đã cấu hình quy định cho từng trình độ của huấn luyện viên.
 
-### GET `/api/payroll/instructor/{instructorId}`
-- **Phân quyền**: Admin hoặc chính giảng viên đó.
+### GET `/api/payroll/coach/{coachId}`
+- **Phân quyền**: Admin hoặc chính huấn luyện viên đó.
 - **Response**: danh sách các kỳ lương.
 
 ### GET `/api/payroll/{payrollId}`
@@ -303,14 +319,14 @@ Các endpoint dưới đây yêu cầu token hợp lệ trừ khi ghi chú khác
 
 1. **Đăng nhập**: gọi `POST /api/auth/google` với `idToken` → nhận `accessToken`.
 2. **Thêm lớp & lịch**: dùng token admin gọi các endpoint lớp học và lịch học.
-3. **Điểm danh**: giảng viên dùng token của mình gọi `POST /api/attendance/check-in`.
-4. **Xử lý vắng mặt**: giảng viên tạo ticket, admin duyệt.
+3. **Điểm danh**: huấn luyện viên dùng token của mình gọi `POST /api/attendance/check-in`.
+4. **Xử lý vắng mặt**: huấn luyện viên tạo ticket, admin duyệt.
 5. **Tổng hợp lương**: admin tạo payroll cho từng tháng và theo dõi qua các API bảng lương.
 
 ## 11. Mẹo xử lý lỗi
 
 - **401 Unauthorized**: kiểm tra lại header `Authorization` hoặc token đã hết hạn.
-- **403 Forbidden**: role hiện tại không đủ quyền hoặc `instructorId` không khớp với token.
+- **403 Forbidden**: role hiện tại không đủ quyền hoặc `coachId` không khớp với token.
 - **404 Not Found**: đối tượng không tồn tại hoặc đã bị xóa.
 - **400 Bad Request**: dữ liệu không hợp lệ (ví dụ ngày không hợp lệ, `classId` không khớp body).
 

@@ -57,10 +57,13 @@ public class TrainingClassService : ITrainingClassService
             throw new InvalidOperationException($"Class with code {request.Code} already exists");
         }
 
-        var instructorExists = await _dbContext.Instructors.FirstOrDefaultAsync(x => x.UserAccountId == request.InstructorId, cancellationToken);
-        if (instructorExists == null)
+        var coachExists = await _dbContext.Users
+            .Include(x => x.UserRoles)
+                .ThenInclude(x => x.Role)
+            .AnyAsync(x => x.Id == request.CoachId && x.UserRoles.Any(r => r.Role.Name == "Coach"), cancellationToken);
+        if (!coachExists)
         {
-            throw new InvalidOperationException("Instructor does not exist");
+            throw new InvalidOperationException("Coach does not exist");
         }
 
         var entity = new TrainingClass
@@ -71,7 +74,7 @@ public class TrainingClassService : ITrainingClassService
             StartDate = request.StartDate,
             EndDate = request.EndDate,
             MaxStudents = request.MaxStudents,
-            InstructorId = instructorExists.Id
+            CoachId = request.CoachId
         };
 
         _dbContext.TrainingClasses.Add(entity);
@@ -87,10 +90,13 @@ public class TrainingClassService : ITrainingClassService
             return null;
         }
 
-        var instructorExists = await _dbContext.Instructors.AnyAsync(x => x.Id == request.InstructorId, cancellationToken);
-        if (!instructorExists)
+        var coachExists = await _dbContext.Users
+            .Include(x => x.UserRoles)
+                .ThenInclude(x => x.Role)
+            .AnyAsync(x => x.Id == request.CoachId && x.UserRoles.Any(r => r.Role.Name == "Coach"), cancellationToken);
+        if (!coachExists)
         {
-            throw new InvalidOperationException("Instructor does not exist");
+            throw new InvalidOperationException("Coach does not exist");
         }
 
         entity.Name = request.Name;
@@ -98,7 +104,7 @@ public class TrainingClassService : ITrainingClassService
         entity.StartDate = request.StartDate;
         entity.EndDate = request.EndDate;
         entity.MaxStudents = request.MaxStudents;
-        entity.InstructorId = request.InstructorId;
+        entity.CoachId = request.CoachId;
         entity.UpdatedAt = DateTime.UtcNow;
 
         await _dbContext.SaveChangesAsync(cancellationToken);

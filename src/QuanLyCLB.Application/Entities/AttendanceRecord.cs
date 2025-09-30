@@ -11,8 +11,8 @@ public class AttendanceRecord : AuditableEntity
     public Guid Id { get; set; } = Guid.NewGuid();
     public Guid ClassScheduleId { get; set; }
     public ClassSchedule? ClassSchedule { get; set; }
-    public Guid InstructorId { get; set; }
-    public Instructor? Instructor { get; set; }
+    public Guid CoachId { get; set; }
+    public UserAccount? Coach { get; set; }
 
     // Thời gian và tọa độ điểm danh
     public DateTime CheckedInAt { get; set; }

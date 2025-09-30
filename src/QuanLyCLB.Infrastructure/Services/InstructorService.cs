@@ -23,19 +23,21 @@ public class InstructorService : IInstructorService
         pageNumber = pageNumber < 1 ? 1 : pageNumber;
         pageSize = pageSize < 1 ? 20 : pageSize;
 
-        var query = _dbContext.Instructors
+        var query = _dbContext.Users
             .AsNoTracking()
-            .Include(x => x.User)
-            .OrderBy(x => x.User.FullName);
+            .Include(x => x.UserRoles)
+                .ThenInclude(x => x.Role)
+            .Where(x => x.UserRoles.Any(r => r.Role.Name == RoleNames.Coach))
+            .OrderBy(x => x.FullName);
 
         var totalCount = await query.CountAsync(cancellationToken);
-        var instructors = await query
+        var users = await query
             .Skip((pageNumber - 1) * pageSize)
             .Take(pageSize)
             .ToListAsync(cancellationToken);
 
-        var items = instructors
-            .Select(x => x.ToDto())
+        var items = users
+            .Select(x => x.ToInstructorDto())
             .ToList();
 
         return new PagedResult<InstructorDto>(items, totalCount, pageNumber, pageSize);
@@ -43,30 +45,37 @@ public class InstructorService : IInstructorService
 
     public async Task<InstructorDto?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        var instructor = await _dbContext.Instructors
+        var user = await _dbContext.Users
             .AsNoTracking()
-            .Include(x => x.User)
             .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
 
-        return instructor?.ToDto();
+        if (user is null)
+        {
+            return null;
+        }
+
+        return user.ToInstructorDto();
     }
 
     public async Task<InstructorDto> CreateAsync(CreateInstructorRequest request, CancellationToken cancellationToken = default)
     {
+        var normalizedEmail = request.Email.Trim();
+
         var userAccount = await _dbContext.Users
             .Include(x => x.UserRoles)
                 .ThenInclude(x => x.Role)
-            .Include(x => x.Instructor)
-            .FirstOrDefaultAsync(x => x.Email == request.Email, cancellationToken);
+            .FirstOrDefaultAsync(x => x.Email == normalizedEmail, cancellationToken);
 
         if (userAccount is null)
         {
             userAccount = new UserAccount
             {
-                Username = request.Email,
-                Email = request.Email,
+                Username = normalizedEmail,
+                Email = normalizedEmail,
                 FullName = request.FullName,
                 PhoneNumber = request.PhoneNumber,
+                SkillLevel = request.SkillLevel,
+                Certification = request.Certification,
                 IsActive = true
             };
             _dbContext.Users.Add(userAccount);
@@ -78,75 +87,66 @@ public class InstructorService : IInstructorService
                 throw new InvalidOperationException("User account is disabled");
             }
 
-            if (userAccount.Instructor is not null)
-            {
-                throw new InvalidOperationException($"Instructor with email {request.Email} already exists");
-            }
-
-            userAccount.Username = request.Email;
-            userAccount.Email = request.Email;
             userAccount.FullName = request.FullName;
             userAccount.PhoneNumber = request.PhoneNumber;
+            userAccount.SkillLevel = request.SkillLevel;
+            userAccount.Certification = request.Certification;
         }
 
-        var instructor = new Instructor
-        {
-            UserAccountId = userAccount.Id,
-            HourlyRate = request.HourlyRate,
-            IsActive = true
-        };
-
-        _dbContext.Instructors.Add(instructor);
-        await EnsureRoleAssignedAsync(userAccount, "Instructor", cancellationToken);
+        await EnsureRoleAssignedAsync(userAccount, RoleNames.Coach, cancellationToken);
         await _dbContext.SaveChangesAsync(cancellationToken);
-        await _dbContext.Entry(instructor).Reference(x => x.User).LoadAsync(cancellationToken);
 
-        return instructor.ToDto();
+        return userAccount.ToInstructorDto();
     }
 
     public async Task<InstructorDto?> UpdateAsync(Guid id, UpdateInstructorRequest request, CancellationToken cancellationToken = default)
     {
-        var instructor = await _dbContext.Instructors
-            .Include(x => x.User)
+        var userAccount = await _dbContext.Users
+            .Include(x => x.UserRoles)
+                .ThenInclude(x => x.Role)
             .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
-        if (instructor is null)
+
+        if (userAccount is null)
         {
             return null;
         }
 
-        instructor.User.FullName = request.FullName;
-        instructor.User.PhoneNumber = request.PhoneNumber;
-        instructor.HourlyRate = request.HourlyRate;
-        instructor.IsActive = request.IsActive;
-        instructor.User.IsActive = request.IsActive;
-        instructor.UpdatedAt = DateTime.UtcNow;
-        instructor.User.UpdatedAt = DateTime.UtcNow;
+        userAccount.FullName = request.FullName;
+        userAccount.PhoneNumber = request.PhoneNumber;
+        userAccount.SkillLevel = request.SkillLevel;
+        userAccount.Certification = request.Certification;
+        userAccount.IsActive = request.IsActive;
+        userAccount.UpdatedAt = DateTime.UtcNow;
+
+        if (!request.IsActive)
+        {
+            RemoveRoleAssignment(userAccount, RoleNames.Coach);
+        }
+        else
+        {
+            await EnsureRoleAssignedAsync(userAccount, RoleNames.Coach, cancellationToken);
+        }
 
         await _dbContext.SaveChangesAsync(cancellationToken);
-
-        return instructor.ToDto();
+        return userAccount.ToInstructorDto();
     }
 
     public async Task<bool> DeleteAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        var instructor = await _dbContext.Instructors
-            .Include(x => x.User)
-                .ThenInclude(x => x.UserRoles)
-                    .ThenInclude(x => x.Role)
+        var userAccount = await _dbContext.Users
+            .Include(x => x.UserRoles)
+                .ThenInclude(x => x.Role)
             .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
-        if (instructor is null)
+
+        if (userAccount is null)
         {
             return false;
         }
 
-        var instructorRole = instructor.User.UserRoles
-            .FirstOrDefault(x => string.Equals(x.Role.Name, "Instructor", StringComparison.OrdinalIgnoreCase));
-        if (instructorRole is not null)
-        {
-            _dbContext.UserRoles.Remove(instructorRole);
-        }
+        RemoveRoleAssignment(userAccount, RoleNames.Coach);
+        userAccount.IsActive = false;
+        userAccount.UpdatedAt = DateTime.UtcNow;
 
-        _dbContext.Instructors.Remove(instructor);
         await _dbContext.SaveChangesAsync(cancellationToken);
         return true;
     }
@@ -177,26 +177,8 @@ public class InstructorService : IInstructorService
             throw new InvalidOperationException("Google account does not match the registered email");
         }
 
-        //userAccount.Username = email;
-        userAccount.Email = email;
-        //userAccount.FullName = fullName;
-        userAccount.AvatarUrl = null;
-
-        var instructor = await _dbContext.Instructors
-            .Include(x => x.User)
-            .FirstOrDefaultAsync(x => x.UserAccountId == userAccount.Id, cancellationToken);
-
-        if (instructor is null)
-        {
-            throw new InvalidOperationException("Instructor is not registered in the system");
-        }
-
-        if (!instructor.IsActive)
-        {
-            throw new InvalidOperationException("Instructor account is disabled");
-        }
-
-        await EnsureRoleAssignedAsync(userAccount, "Instructor", cancellationToken);
+        userAccount.FullName = fullName;
+        await EnsureRoleAssignedAsync(userAccount, RoleNames.Coach, cancellationToken);
         await _dbContext.SaveChangesAsync(cancellationToken);
 
         var roles = userAccount.UserRoles
@@ -204,7 +186,7 @@ public class InstructorService : IInstructorService
             .Distinct(StringComparer.OrdinalIgnoreCase)
             .ToList();
 
-        return new InstructorAuthResult(userAccount.Id, instructor.ToDto(), roles);
+        return new InstructorAuthResult(userAccount.Id, userAccount.ToInstructorDto(), roles);
     }
 
     private async Task EnsureRoleAssignedAsync(UserAccount userAccount, string roleName, CancellationToken cancellationToken)
@@ -229,5 +211,21 @@ public class InstructorService : IInstructorService
             User = userAccount,
             Role = role
         });
+    }
+
+    private static void RemoveRoleAssignment(UserAccount userAccount, string roleName)
+    {
+        var roleAssignment = userAccount.UserRoles
+            .FirstOrDefault(x => string.Equals(x.Role.Name, roleName, StringComparison.OrdinalIgnoreCase));
+
+        if (roleAssignment is not null)
+        {
+            userAccount.UserRoles.Remove(roleAssignment);
+        }
+    }
+
+    private static class RoleNames
+    {
+        public const string Coach = "Coach";
     }
 }

@@ -10,13 +10,13 @@ public class PayrollPeriodConfiguration : IEntityTypeConfiguration<PayrollPeriod
     {
         builder.ToTable("PayrollPeriods");
         builder.HasKey(x => x.Id);
-        builder.HasIndex(x => new { x.InstructorId, x.Year, x.Month }).IsUnique();
+        builder.HasIndex(x => new { x.CoachId, x.Year, x.Month }).IsUnique();
         builder.Property(x => x.TotalAmount).HasPrecision(18, 2);
         builder.Property(x => x.TotalHours).HasPrecision(18, 2);
 
-        builder.HasOne(x => x.Instructor)
-            .WithMany(i => i.Payrolls)
-            .HasForeignKey(x => x.InstructorId)
+        builder.HasOne(x => x.Coach)
+            .WithMany()
+            .HasForeignKey(x => x.CoachId)
             .OnDelete(DeleteBehavior.Cascade);
     }
 }
