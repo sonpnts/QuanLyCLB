@@ -109,7 +109,8 @@ public class BranchService : IBranchService
             throw new InvalidOperationException("Cannot delete branch while schedules are still assigned");
         }
 
-        _dbContext.Branches.Remove(entity);
+        entity.IsActive = false;
+        entity.UpdatedAt = DateTime.UtcNow;
         await _dbContext.SaveChangesAsync(cancellationToken);
         return true;
     }

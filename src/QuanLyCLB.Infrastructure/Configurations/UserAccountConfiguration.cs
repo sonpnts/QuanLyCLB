@@ -20,6 +20,8 @@ public class UserAccountConfiguration : IEntityTypeConfiguration<UserAccount>
         builder.Property(x => x.GoogleSubject).HasMaxLength(200);
         builder.Property(x => x.PasswordHash).HasMaxLength(512);
         builder.Property(x => x.PasswordSalt).HasMaxLength(256);
+        builder.Property(x => x.SkillLevel).HasMaxLength(200).HasDefaultValue(string.Empty).IsRequired();
+        builder.Property(x => x.Certification).HasMaxLength(500);
         builder.Property(x => x.IsActive).HasDefaultValue(true);
 
         builder.HasMany(x => x.UserRoles)

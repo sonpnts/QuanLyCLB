@@ -10,6 +10,8 @@ public record UserDto(
     string FullName,
     string PhoneNumber,
     string? AvatarUrl,
+    string SkillLevel,
+    string? Certification,
     bool IsActive,
     bool HasPassword,
     bool IsGoogleAccount,
@@ -22,6 +24,8 @@ public record CreateUserRequest(
     string PhoneNumber,
     string? Password,
     bool IsActive,
+    string? SkillLevel,
+    string? Certification,
     string? AvatarUrl = null,
     IReadOnlyCollection<string>? Roles = null);
 
@@ -30,6 +34,8 @@ public record UpdateUserRequest(
     string PhoneNumber,
     string? AvatarUrl,
     bool IsActive,
+    string? SkillLevel,
+    string? Certification,
     IReadOnlyCollection<string>? Roles = null);
 
 public record ChangeUserEmailRequest(string NewEmail, bool UpdateUsername = true);

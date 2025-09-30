@@ -14,6 +14,8 @@ public static class EntityDtoMappingExtensions
         entity.FullName,
         entity.PhoneNumber,
         entity.AvatarUrl,
+        entity.SkillLevel,
+        entity.Certification,
         entity.IsActive,
         !string.IsNullOrWhiteSpace(entity.PasswordHash),
         !string.IsNullOrWhiteSpace(entity.GoogleSubject),
