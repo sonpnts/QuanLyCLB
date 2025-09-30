@@ -13,6 +13,7 @@ public static class DependencyInjection
     public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
         services.Configure<JwtSettings>(configuration.GetSection("Authentication:Jwt"));
+        services.Configure<SmtpSettings>(configuration.GetSection("Email:Smtp"));
 
         services.AddDbContext<ClubManagementDbContext>(options =>
         {
@@ -30,6 +31,9 @@ public static class DependencyInjection
         services.AddScoped<IScheduleService, ScheduleService>();
         services.AddScoped<IAttendanceService, AttendanceService>();
         services.AddScoped<IPayrollService, PayrollService>();
+        services.AddScoped<IAuthService, AuthService>();
+        services.AddScoped<ILoginAuditService, LoginAuditService>();
+        services.AddScoped<IEmailService, SmtpEmailService>();
         services.AddScoped<IGoogleTokenValidator, GoogleTokenValidator>();
         services.AddSingleton<IJwtTokenService, JwtTokenService>();
 

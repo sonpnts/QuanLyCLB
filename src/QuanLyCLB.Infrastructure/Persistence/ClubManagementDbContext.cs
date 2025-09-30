@@ -27,6 +27,7 @@ public class ClubManagementDbContext : DbContext
     public DbSet<AttendanceTicket> AttendanceTickets => Set<AttendanceTicket>();
     public DbSet<PayrollPeriod> PayrollPeriods => Set<PayrollPeriod>();
     public DbSet<PayrollDetail> PayrollDetails => Set<PayrollDetail>();
+    public DbSet<LoginAuditLog> LoginAuditLogs => Set<LoginAuditLog>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

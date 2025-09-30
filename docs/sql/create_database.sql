@@ -20,7 +20,8 @@ BEGIN
         Username NVARCHAR(200) NOT NULL,
         Email NVARCHAR(200) NOT NULL,
         GoogleSubject NVARCHAR(200) NULL,
-        PasswordHash NVARCHAR(200) NULL,
+        PasswordHash NVARCHAR(512) NULL,
+        PasswordSalt NVARCHAR(256) NULL,
         CreatedAt DATETIME2 NOT NULL DEFAULT SYSUTCDATETIME(),
         UpdatedAt DATETIME2 NULL,
         CreatedByUserId UNIQUEIDENTIFIER NULL,
@@ -30,6 +31,34 @@ BEGIN
 
     CREATE UNIQUE INDEX IX_Users_Email ON dbo.Users(Email);
     CREATE UNIQUE INDEX IX_Users_Username ON dbo.Users(Username);
+END
+GO
+
+-- Bảng lưu log đăng nhập của người dùng
+IF OBJECT_ID(N'dbo.LoginAuditLogs', N'U') IS NULL
+BEGIN
+    CREATE TABLE dbo.LoginAuditLogs
+    (
+        Id UNIQUEIDENTIFIER NOT NULL PRIMARY KEY,
+        UserAccountId UNIQUEIDENTIFIER NULL,
+        Username NVARCHAR(200) NOT NULL,
+        Provider NVARCHAR(100) NOT NULL,
+        IsSuccess BIT NOT NULL,
+        ApiEndpoint NVARCHAR(400) NOT NULL,
+        LocationAddress NVARCHAR(500) NULL,
+        DeviceInfo NVARCHAR(500) NULL,
+        IpAddress NVARCHAR(100) NULL,
+        Message NVARCHAR(500) NULL,
+        CreatedAt DATETIME2 NOT NULL DEFAULT SYSUTCDATETIME(),
+        UpdatedAt DATETIME2 NULL,
+        CreatedByUserId UNIQUEIDENTIFIER NULL,
+        UpdatedByUserId UNIQUEIDENTIFIER NULL
+    );
+
+    ALTER TABLE dbo.LoginAuditLogs
+        ADD CONSTRAINT FK_LoginAuditLogs_Users
+            FOREIGN KEY (UserAccountId) REFERENCES dbo.Users(Id)
+            ON DELETE SET NULL;
 END
 GO
 
