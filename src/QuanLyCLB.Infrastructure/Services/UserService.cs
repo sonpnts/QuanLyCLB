@@ -129,7 +129,6 @@ public class UserService : IUserService
         var userAccount = await _dbContext.Users
             .Include(x => x.UserRoles)
                 .ThenInclude(x => x.Role)
-            .Include(x => x.Instructor)
             .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
 
         if (userAccount is null)
@@ -146,12 +145,6 @@ public class UserService : IUserService
         userAccount.IsActive = request.IsActive;
         userAccount.UpdatedAt = DateTime.UtcNow;
 
-        if (userAccount.Instructor is not null)
-        {
-            userAccount.Instructor.IsActive = request.IsActive;
-            userAccount.Instructor.UpdatedAt = DateTime.UtcNow;
-        }
-
         await SyncRolesAsync(userAccount, request.Roles, cancellationToken);
         await _dbContext.SaveChangesAsync(cancellationToken);
 
@@ -161,17 +154,11 @@ public class UserService : IUserService
     public async Task<bool> DeleteAsync(Guid id, CancellationToken cancellationToken = default)
     {
         var userAccount = await _dbContext.Users
-            .Include(x => x.Instructor)
             .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
 
         if (userAccount is null)
         {
             return false;
-        }
-
-        if (userAccount.Instructor is not null)
-        {
-            throw new InvalidOperationException("Cannot delete user that is linked to an instructor");
         }
 
         _dbContext.Users.Remove(userAccount);

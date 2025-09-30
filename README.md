@@ -4,13 +4,14 @@ Dự án minh họa backend quản lý câu lạc bộ võ với .NET 8, xây d�
 
 ## Tính năng chính
 
-- Quản lý huấn luyện viên với mức lương theo giờ và tài khoản Google.
+- Quản lý huấn luyện viên (Coach) sử dụng tài khoản người dùng chung, bao gồm thông tin trình độ (`SkillLevel`) và chứng chỉ (`Certification`).
 - Quản lý chi nhánh/địa điểm với bán kính điểm danh, thông tin Google Maps (Place ID, URL nhúng).
 - Quản lý lớp học với lịch học cố định theo từng ngày trong tuần (mỗi bản ghi đại diện cho một ngày trong tuần và liên kết tới chi nhánh).
+- Quản lý phân công trợ giảng (Assistant) cho lớp/lịch học thông qua bảng `ClassAssistantAssignments`.
 - Quản lý chấm công bằng tọa độ GPS dựa trên thông tin chi nhánh (Google API phục vụ tìm kiếm địa điểm được tích hợp ở tầng client).
 - Tạo ticket chấm công thủ công và phê duyệt.
-- Sinh bảng lương hàng tháng dựa trên dữ liệu chấm công và lịch học.
-- Đăng nhập bằng Google ID Token, phát hành JWT có hạn 30 ngày và phân quyền theo vai trò `Admin`/`Instructor`.
+- Thiết lập quy định tiền lương (`PayrollRules`) theo vai trò và trình độ, sinh bảng lương hàng tháng dựa trên dữ liệu chấm công và lịch học.
+- Đăng nhập bằng Google ID Token, phát hành JWT có hạn 30 ngày và phân quyền theo vai trò `Admin`/`Coach`/`Assistant`/`Student`.
 
 ## Cấu trúc thư mục & mô hình 3 lớp
 

@@ -7,8 +7,8 @@ public class PayrollPeriod : AuditableEntity
 {
     // Khóa chính và liên kết với giảng viên
     public Guid Id { get; set; } = Guid.NewGuid();
-    public Guid InstructorId { get; set; }
-    public Instructor? Instructor { get; set; }
+    public Guid CoachId { get; set; }
+    public UserAccount? Coach { get; set; }
 
     // Thông tin kỳ lương
     public int Year { get; set; }

@@ -5,7 +5,8 @@ public record InstructorDto(
     string FullName,
     string Email,
     string PhoneNumber,
-    decimal HourlyRate,
+    string SkillLevel,
+    string? Certification,
     bool IsActive
 );
 
@@ -13,13 +14,15 @@ public record CreateInstructorRequest(
     string FullName,
     string Email,
     string PhoneNumber,
-    decimal HourlyRate
+    string SkillLevel,
+    string? Certification
 );
 
 public record UpdateInstructorRequest(
     string FullName,
     string PhoneNumber,
-    decimal HourlyRate,
+    string SkillLevel,
+    string? Certification,
     bool IsActive
 );
 

@@ -9,7 +9,7 @@ public record PayrollDetailDto(
 
 public record PayrollPeriodDto(
     Guid Id,
-    Guid InstructorId,
+    Guid CoachId,
     int Year,
     int Month,
     decimal TotalHours,
@@ -19,7 +19,7 @@ public record PayrollPeriodDto(
 );
 
 public record GeneratePayrollRequest(
-    Guid InstructorId,
+    Guid CoachId,
     int Year,
     int Month
 );

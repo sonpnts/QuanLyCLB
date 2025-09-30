@@ -8,7 +8,7 @@ public record TrainingClassDto(
     DateOnly StartDate,
     DateOnly? EndDate,
     int MaxStudents,
-    Guid InstructorId
+    Guid CoachId
 );
 
 public record CreateTrainingClassRequest(
@@ -18,7 +18,7 @@ public record CreateTrainingClassRequest(
     DateOnly StartDate,
     DateOnly? EndDate,
     int MaxStudents,
-    Guid InstructorId
+    Guid CoachId
 );
 
 public record UpdateTrainingClassRequest(
@@ -27,5 +27,5 @@ public record UpdateTrainingClassRequest(
     DateOnly StartDate,
     DateOnly? EndDate,
     int MaxStudents,
-    Guid InstructorId
+    Guid CoachId
 );

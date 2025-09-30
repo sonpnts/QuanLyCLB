@@ -16,12 +16,14 @@ public class TrainingClass : AuditableEntity
     public DateOnly? EndDate { get; set; }
     public int MaxStudents { get; set; }
 
-    // Quan hệ với giảng viên phụ trách
-    public Guid InstructorId { get; set; }
-    public Instructor? Instructor { get; set; }
+    // Quan hệ với huấn luyện viên phụ trách (Coach)
+    public Guid CoachId { get; set; }
+    public UserAccount? Coach { get; set; }
 
     public bool IsActive { get; set; } = true;
 
     // Danh sách lịch học (navigation property)
     public ICollection<ClassSchedule> Schedules { get; set; } = new List<ClassSchedule>();
+
+    public ICollection<ClassAssistantAssignment> AssistantAssignments { get; set; } = new List<ClassAssistantAssignment>();
 }

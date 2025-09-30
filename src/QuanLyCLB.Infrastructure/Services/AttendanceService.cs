@@ -30,9 +30,9 @@ public class AttendanceService : IAttendanceService
             .FirstOrDefaultAsync(s => s.Id == request.ClassScheduleId, cancellationToken)
             ?? throw new InvalidOperationException("Class schedule not found");
 
-        if (schedule.TrainingClass?.InstructorId != request.InstructorId)
+        if (schedule.TrainingClass?.CoachId != request.CoachId)
         {
-            throw new InvalidOperationException("Instructor is not assigned to this class");
+            throw new InvalidOperationException("Coach is not assigned to this class");
         }
 
         schedule.EnsureScheduleIsActiveForDate(request.CheckedInAt);
@@ -49,12 +49,12 @@ public class AttendanceService : IAttendanceService
         var record = new AttendanceRecord
         {
             ClassScheduleId = request.ClassScheduleId,
-            InstructorId = request.InstructorId,
+            CoachId = request.CoachId,
             CheckedInAt = request.CheckedInAt,
             Latitude = request.Latitude,
             Longitude = request.Longitude,
             Status = status,
-            CreatedByUserId = request.InstructorId
+            CreatedByUserId = request.CoachId
         };
 
         _dbContext.AttendanceRecords.Add(record);
@@ -75,7 +75,7 @@ public class AttendanceService : IAttendanceService
         var record = new AttendanceRecord
         {
             ClassScheduleId = request.ClassScheduleId,
-            InstructorId = request.InstructorId,
+            CoachId = request.CoachId,
             CheckedInAt = request.OccurredAt,
             Latitude = branch.Latitude,
             Longitude = branch.Longitude,
@@ -89,11 +89,11 @@ public class AttendanceService : IAttendanceService
         return record.ToDto();
     }
 
-    public async Task<IReadOnlyCollection<AttendanceRecordDto>> GetAttendanceByInstructorAsync(Guid instructorId, DateOnly fromDate, DateOnly toDate, CancellationToken cancellationToken = default)
+    public async Task<IReadOnlyCollection<AttendanceRecordDto>> GetAttendanceByCoachAsync(Guid coachId, DateOnly fromDate, DateOnly toDate, CancellationToken cancellationToken = default)
     {
         var records = await _dbContext.AttendanceRecords
             .AsNoTracking()
-            .Where(r => r.InstructorId == instructorId &&
+            .Where(r => r.CoachId == coachId &&
                         r.CheckedInAt >= fromDate.ToDateTime(TimeOnly.MinValue) &&
                         r.CheckedInAt <= toDate.ToDateTime(TimeOnly.MaxValue))
             .OrderBy(r => r.CheckedInAt)
@@ -101,7 +101,7 @@ public class AttendanceService : IAttendanceService
             {
                 Id = r.Id,
                 ClassScheduleId = r.ClassScheduleId,
-                InstructorId = r.InstructorId,
+                CoachId = r.CoachId,
                 CheckedInAt = r.CheckedInAt,
                 Latitude = r.Latitude,
                 Longitude = r.Longitude,
@@ -125,7 +125,7 @@ public class AttendanceService : IAttendanceService
         var ticket = new AttendanceTicket
         {
             ClassScheduleId = request.ClassScheduleId,
-            InstructorId = request.InstructorId,
+            CoachId = request.CoachId,
             Reason = request.Reason,
             CreatedBy = request.CreatedBy,
             CreatedByUserId = request.CreatedByUserId,

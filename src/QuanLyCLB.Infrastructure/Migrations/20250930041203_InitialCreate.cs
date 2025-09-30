@@ -63,6 +63,8 @@ namespace QuanLyCLB.Infrastructure.Migrations
                     GoogleSubject = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: true),
                     PasswordHash = table.Column<string>(type: "nvarchar(512)", maxLength: 512, nullable: true),
                     PasswordSalt = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    SkillLevel = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false, defaultValue: ""),
+                    Certification = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
                     IsActive = table.Column<bool>(type: "bit", nullable: false, defaultValue: true),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "SYSUTCDATETIME()"),
                     CreatedByUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
@@ -72,30 +74,6 @@ namespace QuanLyCLB.Infrastructure.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Users", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Instructors",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    UserAccountId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    HourlyRate = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
-                    IsActive = table.Column<bool>(type: "bit", nullable: false, defaultValue: true),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "SYSUTCDATETIME()"),
-                    CreatedByUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    UpdatedByUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Instructors", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Instructors_Users_UserAccountId",
-                        column: x => x.UserAccountId,
-                        principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -126,6 +104,26 @@ namespace QuanLyCLB.Infrastructure.Migrations
                         principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.SetNull);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "PayrollRules",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    RoleName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    SkillLevel = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
+                    HourlyRate = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
+                    Notes = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: true),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false, defaultValue: true),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "SYSUTCDATETIME()"),
+                    CreatedByUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    UpdatedByUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PayrollRules", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -187,7 +185,7 @@ namespace QuanLyCLB.Infrastructure.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    InstructorId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CoachId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Year = table.Column<int>(type: "int", nullable: false),
                     Month = table.Column<int>(type: "int", nullable: false),
                     TotalHours = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
@@ -203,9 +201,9 @@ namespace QuanLyCLB.Infrastructure.Migrations
                 {
                     table.PrimaryKey("PK_PayrollPeriods", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_PayrollPeriods_Instructors_InstructorId",
-                        column: x => x.InstructorId,
-                        principalTable: "Instructors",
+                        name: "FK_PayrollPeriods_Users_CoachId",
+                        column: x => x.CoachId,
+                        principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -221,7 +219,7 @@ namespace QuanLyCLB.Infrastructure.Migrations
                     StartDate = table.Column<DateOnly>(type: "date", nullable: false),
                     EndDate = table.Column<DateOnly>(type: "date", nullable: true),
                     MaxStudents = table.Column<int>(type: "int", nullable: false),
-                    InstructorId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CoachId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     IsActive = table.Column<bool>(type: "bit", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "SYSUTCDATETIME()"),
                     CreatedByUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
@@ -232,9 +230,9 @@ namespace QuanLyCLB.Infrastructure.Migrations
                 {
                     table.PrimaryKey("PK_TrainingClasses", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_TrainingClasses_Instructors_InstructorId",
-                        column: x => x.InstructorId,
-                        principalTable: "Instructors",
+                        name: "FK_TrainingClasses_Users_CoachId",
+                        column: x => x.CoachId,
+                        principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
@@ -273,12 +271,53 @@ namespace QuanLyCLB.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "ClassAssistantAssignments",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    TrainingClassId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ClassScheduleId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    AssistantId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    RoleName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    StartDate = table.Column<DateOnly>(type: "date", nullable: false),
+                    EndDate = table.Column<DateOnly>(type: "date", nullable: true),
+                    Notes = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: false),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "SYSUTCDATETIME()"),
+                    CreatedByUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    UpdatedByUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ClassAssistantAssignments", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ClassAssistantAssignments_ClassSchedules_ClassScheduleId",
+                        column: x => x.ClassScheduleId,
+                        principalTable: "ClassSchedules",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ClassAssistantAssignments_TrainingClasses_TrainingClassId",
+                        column: x => x.TrainingClassId,
+                        principalTable: "TrainingClasses",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ClassAssistantAssignments_Users_AssistantId",
+                        column: x => x.AssistantId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "AttendanceTickets",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     ClassScheduleId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    InstructorId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CoachId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     IsActive = table.Column<bool>(type: "bit", nullable: false),
                     Reason = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
                     CreatedBy = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
@@ -300,9 +339,9 @@ namespace QuanLyCLB.Infrastructure.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_AttendanceTickets_Instructors_InstructorId",
-                        column: x => x.InstructorId,
-                        principalTable: "Instructors",
+                        name: "FK_AttendanceTickets_Users_CoachId",
+                        column: x => x.CoachId,
+                        principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
@@ -313,7 +352,7 @@ namespace QuanLyCLB.Infrastructure.Migrations
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     ClassScheduleId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    InstructorId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CoachId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CheckedInAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Latitude = table.Column<double>(type: "float", nullable: false),
                     Longitude = table.Column<double>(type: "float", nullable: false),
@@ -342,9 +381,9 @@ namespace QuanLyCLB.Infrastructure.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_AttendanceRecords_Instructors_InstructorId",
-                        column: x => x.InstructorId,
-                        principalTable: "Instructors",
+                        name: "FK_AttendanceRecords_Users_CoachId",
+                        column: x => x.CoachId,
+                        principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
@@ -387,9 +426,9 @@ namespace QuanLyCLB.Infrastructure.Migrations
                 column: "ClassScheduleId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_AttendanceRecords_InstructorId",
+                name: "IX_AttendanceRecords_CoachId",
                 table: "AttendanceRecords",
-                column: "InstructorId");
+                column: "CoachId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_AttendanceRecords_TicketId",
@@ -404,9 +443,9 @@ namespace QuanLyCLB.Infrastructure.Migrations
                 column: "ClassScheduleId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_AttendanceTickets_InstructorId",
+                name: "IX_AttendanceTickets_CoachId",
                 table: "AttendanceTickets",
-                column: "InstructorId");
+                column: "CoachId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Branches_Name",
@@ -420,6 +459,21 @@ namespace QuanLyCLB.Infrastructure.Migrations
                 column: "BranchId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_ClassAssistantAssignments_AssistantId",
+                table: "ClassAssistantAssignments",
+                column: "AssistantId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ClassAssistantAssignments_ClassScheduleId",
+                table: "ClassAssistantAssignments",
+                column: "ClassScheduleId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ClassAssistantAssignments_TrainingClassId",
+                table: "ClassAssistantAssignments",
+                column: "TrainingClassId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_ClassSchedules_TrainingClassId_DayOfWeek",
                 table: "ClassSchedules",
                 columns: new[] { "TrainingClassId", "DayOfWeek" },
@@ -429,12 +483,6 @@ namespace QuanLyCLB.Infrastructure.Migrations
                 name: "IX_ClassSchedules_TrainingClassId_DayOfWeek_StartTime_EndTime",
                 table: "ClassSchedules",
                 columns: new[] { "TrainingClassId", "DayOfWeek", "StartTime", "EndTime" },
-                unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Instructors_UserAccountId",
-                table: "Instructors",
-                column: "UserAccountId",
                 unique: true);
 
             migrationBuilder.CreateIndex(
@@ -458,9 +506,15 @@ namespace QuanLyCLB.Infrastructure.Migrations
                 column: "PayrollPeriodId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_PayrollPeriods_InstructorId_Year_Month",
+                name: "IX_PayrollPeriods_CoachId_Year_Month",
                 table: "PayrollPeriods",
-                columns: new[] { "InstructorId", "Year", "Month" },
+                columns: new[] { "CoachId", "Year", "Month" },
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PayrollRules_RoleName_SkillLevel",
+                table: "PayrollRules",
+                columns: new[] { "RoleName", "SkillLevel" },
                 unique: true);
 
             migrationBuilder.CreateIndex(
@@ -476,9 +530,9 @@ namespace QuanLyCLB.Infrastructure.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_TrainingClasses_InstructorId",
+                name: "IX_TrainingClasses_CoachId",
                 table: "TrainingClasses",
-                column: "InstructorId");
+                column: "CoachId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserRoles_RoleId",
@@ -517,10 +571,10 @@ namespace QuanLyCLB.Infrastructure.Migrations
                 name: "AttendanceRecords");
 
             migrationBuilder.DropTable(
-                name: "PayrollPeriods");
+                name: "ClassAssistantAssignments");
 
             migrationBuilder.DropTable(
-                name: "Roles");
+                name: "PayrollPeriods");
 
             migrationBuilder.DropTable(
                 name: "AttendanceTickets");
@@ -535,7 +589,10 @@ namespace QuanLyCLB.Infrastructure.Migrations
                 name: "TrainingClasses");
 
             migrationBuilder.DropTable(
-                name: "Instructors");
+                name: "PayrollRules");
+
+            migrationBuilder.DropTable(
+                name: "Roles");
 
             migrationBuilder.DropTable(
                 name: "Users");

@@ -5,7 +5,7 @@ namespace QuanLyCLB.Application.DTOs;
 public record AttendanceRecordDto(
     Guid Id,
     Guid ClassScheduleId,
-    Guid InstructorId,
+    Guid CoachId,
     DateTime CheckedInAt,
     double Latitude,
     double Longitude,
@@ -16,7 +16,7 @@ public record AttendanceRecordDto(
 
 public record CheckInRequest(
     Guid ClassScheduleId,
-    Guid InstructorId,
+    Guid CoachId,
     DateTime CheckedInAt,
     double Latitude,
     double Longitude
@@ -24,7 +24,7 @@ public record CheckInRequest(
 
 public record ManualAttendanceRequest(
     Guid ClassScheduleId,
-    Guid InstructorId,
+    Guid CoachId,
     DateTime OccurredAt,
     AttendanceStatus Status,
     string Notes,
@@ -34,7 +34,7 @@ public record ManualAttendanceRequest(
 public record AttendanceTicketDto(
     Guid Id,
     Guid ClassScheduleId,
-    Guid InstructorId,
+    Guid CoachId,
     DateTime CreatedAt,
     string Reason,
     string CreatedBy,
@@ -48,7 +48,7 @@ public record AttendanceTicketDto(
 
 public record CreateTicketRequest(
     Guid ClassScheduleId,
-    Guid InstructorId,
+    Guid CoachId,
     string Reason,
     string CreatedBy,
     Guid? CreatedByUserId = null

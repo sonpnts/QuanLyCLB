@@ -19,7 +19,6 @@ public class ClubManagementDbContext : DbContext
     public DbSet<UserAccount> Users => Set<UserAccount>();
     public DbSet<Role> Roles => Set<Role>();
     public DbSet<UserRole> UserRoles => Set<UserRole>();
-    public DbSet<Instructor> Instructors => Set<Instructor>();
     public DbSet<Branch> Branches => Set<Branch>();
     public DbSet<TrainingClass> TrainingClasses => Set<TrainingClass>();
     public DbSet<ClassSchedule> ClassSchedules => Set<ClassSchedule>();
@@ -27,6 +26,8 @@ public class ClubManagementDbContext : DbContext
     public DbSet<AttendanceTicket> AttendanceTickets => Set<AttendanceTicket>();
     public DbSet<PayrollPeriod> PayrollPeriods => Set<PayrollPeriod>();
     public DbSet<PayrollDetail> PayrollDetails => Set<PayrollDetail>();
+    public DbSet<PayrollRule> PayrollRules => Set<PayrollRule>();
+    public DbSet<ClassAssistantAssignment> ClassAssistantAssignments => Set<ClassAssistantAssignment>();
     public DbSet<LoginAuditLog> LoginAuditLogs => Set<LoginAuditLog>();
     public DbSet<PasswordResetOtp> PasswordResetOtps => Set<PasswordResetOtp>();
 

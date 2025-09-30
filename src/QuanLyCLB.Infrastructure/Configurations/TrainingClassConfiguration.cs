@@ -15,9 +15,9 @@ public class TrainingClassConfiguration : IEntityTypeConfiguration<TrainingClass
         builder.Property(x => x.Name).HasMaxLength(200).IsRequired();
         builder.Property(x => x.Description).HasMaxLength(1000);
 
-        builder.HasOne(x => x.Instructor)
-            .WithMany(i => i.Classes)
-            .HasForeignKey(x => x.InstructorId)
+        builder.HasOne(x => x.Coach)
+            .WithMany()
+            .HasForeignKey(x => x.CoachId)
             .OnDelete(DeleteBehavior.Restrict);
     }
 }
