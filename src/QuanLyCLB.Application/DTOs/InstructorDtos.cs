@@ -24,6 +24,7 @@ public record UpdateInstructorRequest(
 );
 
 public record InstructorAuthResult(
+    Guid UserAccountId,
     InstructorDto Instructor,
     IReadOnlyCollection<string> Roles
 );

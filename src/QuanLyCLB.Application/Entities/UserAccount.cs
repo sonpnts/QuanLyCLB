@@ -16,6 +16,8 @@ public class UserAccount : AuditableEntity
 
     public string? PasswordHash { get; set; }
 
+    public string? PasswordSalt { get; set; }
+
     public bool IsActive { get; set; } = true;
 
     public Instructor? Instructor { get; set; }

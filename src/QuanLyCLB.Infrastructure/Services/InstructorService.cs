@@ -191,7 +191,7 @@ public class InstructorService : IInstructorService
             .Distinct(StringComparer.OrdinalIgnoreCase)
             .ToList();
 
-        return new InstructorAuthResult(instructor.ToDto(), roles);
+        return new InstructorAuthResult(userAccount.Id, instructor.ToDto(), roles);
     }
 
     private async Task EnsureRoleAssignedAsync(UserAccount userAccount, string roleName, CancellationToken cancellationToken)
