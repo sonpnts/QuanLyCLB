@@ -8,7 +8,7 @@ namespace QuanLyCLB.Application.Interfaces;
 
 public interface IBranchService
 {
-    Task<IReadOnlyCollection<BranchDto>> GetAllAsync(CancellationToken cancellationToken = default);
+    Task<PagedResult<BranchDto>> GetAllAsync(int pageNumber = 1, int pageSize = 20, CancellationToken cancellationToken = default);
     Task<BranchDto?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);
     Task<BranchDto> CreateAsync(CreateBranchRequest request, CancellationToken cancellationToken = default);
     Task<BranchDto?> UpdateAsync(Guid id, UpdateBranchRequest request, CancellationToken cancellationToken = default);

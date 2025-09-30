@@ -21,14 +21,26 @@ public class BranchService : IBranchService
         _dbContext = dbContext;
     }
 
-    public async Task<IReadOnlyCollection<BranchDto>> GetAllAsync(CancellationToken cancellationToken = default)
+    public async Task<PagedResult<BranchDto>> GetAllAsync(int pageNumber = 1, int pageSize = 20, CancellationToken cancellationToken = default)
     {
-        var branches = await _dbContext.Branches
+        pageNumber = pageNumber < 1 ? 1 : pageNumber;
+        pageSize = pageSize < 1 ? 20 : pageSize;
+
+        var query = _dbContext.Branches
             .AsNoTracking()
-            .OrderBy(b => b.Name)
+            .OrderBy(b => b.Name);
+
+        var totalCount = await query.CountAsync(cancellationToken);
+        var branches = await query
+            .Skip((pageNumber - 1) * pageSize)
+            .Take(pageSize)
             .ToListAsync(cancellationToken);
 
-        return branches.Select(b => b.ToDto()).ToList();
+        var items = branches
+            .Select(b => b.ToDto())
+            .ToList();
+
+        return new PagedResult<BranchDto>(items, totalCount, pageNumber, pageSize);
     }
 
     public async Task<BranchDto?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)

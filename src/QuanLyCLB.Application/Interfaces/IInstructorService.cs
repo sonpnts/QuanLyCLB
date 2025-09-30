@@ -4,7 +4,7 @@ namespace QuanLyCLB.Application.Interfaces;
 
 public interface IInstructorService
 {
-    Task<IReadOnlyCollection<InstructorDto>> GetAllAsync(CancellationToken cancellationToken = default);
+    Task<PagedResult<InstructorDto>> GetAllAsync(int pageNumber = 1, int pageSize = 20, CancellationToken cancellationToken = default);
     Task<InstructorDto?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);
     Task<InstructorDto> CreateAsync(CreateInstructorRequest request, CancellationToken cancellationToken = default);
     Task<InstructorDto?> UpdateAsync(Guid id, UpdateInstructorRequest request, CancellationToken cancellationToken = default);

@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using QuanLyCLB.Application.DTOs;
 using QuanLyCLB.Application.Entities;
@@ -17,14 +18,26 @@ public class TrainingClassService : ITrainingClassService
         _dbContext = dbContext;
     }
 
-    public async Task<IReadOnlyCollection<TrainingClassDto>> GetAllAsync(CancellationToken cancellationToken = default)
+    public async Task<PagedResult<TrainingClassDto>> GetAllAsync(int pageNumber = 1, int pageSize = 20, CancellationToken cancellationToken = default)
     {
-        var classes = await _dbContext.TrainingClasses
+        pageNumber = pageNumber < 1 ? 1 : pageNumber;
+        pageSize = pageSize < 1 ? 20 : pageSize;
+
+        var query = _dbContext.TrainingClasses
             .AsNoTracking()
-            .OrderBy(x => x.Name)
+            .OrderBy(x => x.Name);
+
+        var totalCount = await query.CountAsync(cancellationToken);
+        var classes = await query
+            .Skip((pageNumber - 1) * pageSize)
+            .Take(pageSize)
             .ToListAsync(cancellationToken);
 
-        return classes.Select(x => x.ToDto()).ToList();
+        var items = classes
+            .Select(x => x.ToDto())
+            .ToList();
+
+        return new PagedResult<TrainingClassDto>(items, totalCount, pageNumber, pageSize);
     }
 
     public async Task<TrainingClassDto?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)

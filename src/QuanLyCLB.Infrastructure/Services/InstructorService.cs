@@ -18,15 +18,27 @@ public class InstructorService : IInstructorService
         _dbContext = dbContext;
     }
 
-    public async Task<IReadOnlyCollection<InstructorDto>> GetAllAsync(CancellationToken cancellationToken = default)
+    public async Task<PagedResult<InstructorDto>> GetAllAsync(int pageNumber = 1, int pageSize = 20, CancellationToken cancellationToken = default)
     {
-        var instructors = await _dbContext.Instructors
+        pageNumber = pageNumber < 1 ? 1 : pageNumber;
+        pageSize = pageSize < 1 ? 20 : pageSize;
+
+        var query = _dbContext.Instructors
             .AsNoTracking()
             .Include(x => x.User)
-            .OrderBy(x => x.User.FullName)
+            .OrderBy(x => x.User.FullName);
+
+        var totalCount = await query.CountAsync(cancellationToken);
+        var instructors = await query
+            .Skip((pageNumber - 1) * pageSize)
+            .Take(pageSize)
             .ToListAsync(cancellationToken);
 
-        return instructors.Select(x => x.ToDto()).ToList();
+        var items = instructors
+            .Select(x => x.ToDto())
+            .ToList();
+
+        return new PagedResult<InstructorDto>(items, totalCount, pageNumber, pageSize);
     }
 
     public async Task<InstructorDto?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)

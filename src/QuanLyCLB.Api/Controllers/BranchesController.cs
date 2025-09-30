@@ -22,9 +22,9 @@ public class BranchesController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<IReadOnlyCollection<BranchDto>>> GetAll(CancellationToken cancellationToken)
+    public async Task<ActionResult<PagedResult<BranchDto>>> GetAll([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 20, CancellationToken cancellationToken = default)
     {
-        var branches = await _branchService.GetAllAsync(cancellationToken);
+        var branches = await _branchService.GetAllAsync(pageNumber, pageSize, cancellationToken);
         return Ok(branches);
     }
 
