@@ -119,7 +119,8 @@ public class TrainingClassService : ITrainingClassService
             return false;
         }
 
-        _dbContext.TrainingClasses.Remove(entity);
+        entity.IsActive = false;
+        entity.UpdatedAt = DateTime.UtcNow;
         await _dbContext.SaveChangesAsync(cancellationToken);
         return true;
     }

@@ -75,6 +75,10 @@ public class UserService : IUserService
         var normalizedEmail = request.Email.Trim();
         var normalizedFullName = request.FullName.Trim();
         var normalizedPhone = request.PhoneNumber?.Trim() ?? string.Empty;
+        var normalizedSkillLevel = request.SkillLevel?.Trim() ?? string.Empty;
+        var normalizedCertification = string.IsNullOrWhiteSpace(request.Certification)
+            ? null
+            : request.Certification.Trim();
 
         if (await _dbContext.Users.AnyAsync(x => x.Username == normalizedUsername, cancellationToken))
         {
@@ -93,6 +97,8 @@ public class UserService : IUserService
             FullName = normalizedFullName,
             PhoneNumber = normalizedPhone,
             AvatarUrl = string.IsNullOrWhiteSpace(request.AvatarUrl) ? null : request.AvatarUrl.Trim(),
+            SkillLevel = normalizedSkillLevel,
+            Certification = normalizedCertification,
             IsActive = request.IsActive
         };
 
@@ -138,11 +144,23 @@ public class UserService : IUserService
 
         var normalizedFullName = request.FullName.Trim();
         var normalizedPhone = request.PhoneNumber?.Trim() ?? string.Empty;
-
         userAccount.FullName = normalizedFullName;
         userAccount.PhoneNumber = normalizedPhone;
         userAccount.AvatarUrl = string.IsNullOrWhiteSpace(request.AvatarUrl) ? null : request.AvatarUrl.Trim();
         userAccount.IsActive = request.IsActive;
+        if (request.SkillLevel is not null)
+        {
+            var normalizedSkillLevel = request.SkillLevel.Trim();
+            userAccount.SkillLevel = normalizedSkillLevel;
+        }
+
+        if (request.Certification is not null)
+        {
+            var normalizedCertification = string.IsNullOrWhiteSpace(request.Certification)
+                ? null
+                : request.Certification.Trim();
+            userAccount.Certification = normalizedCertification;
+        }
         userAccount.UpdatedAt = DateTime.UtcNow;
 
         await SyncRolesAsync(userAccount, request.Roles, cancellationToken);
@@ -161,7 +179,8 @@ public class UserService : IUserService
             return false;
         }
 
-        _dbContext.Users.Remove(userAccount);
+        userAccount.IsActive = false;
+        userAccount.UpdatedAt = DateTime.UtcNow;
         await _dbContext.SaveChangesAsync(cancellationToken);
         return true;
     }
