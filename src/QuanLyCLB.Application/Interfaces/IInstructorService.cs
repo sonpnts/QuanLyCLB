@@ -9,5 +9,5 @@ public interface IInstructorService
     Task<InstructorDto> CreateAsync(CreateInstructorRequest request, CancellationToken cancellationToken = default);
     Task<InstructorDto?> UpdateAsync(Guid id, UpdateInstructorRequest request, CancellationToken cancellationToken = default);
     Task<bool> DeleteAsync(Guid id, CancellationToken cancellationToken = default);
-    Task<InstructorAuthResult> SyncGoogleAccountAsync(string email, string fullName, string googleSubject, CancellationToken cancellationToken = default);
+    Task<InstructorAuthResult> SyncGoogleAccountAsync(string email, string fullName, string googleSubject,string avatarUrl, CancellationToken cancellationToken = default);
 }

@@ -151,7 +151,7 @@ public class InstructorService : IInstructorService
         return true;
     }
 
-    public async Task<InstructorAuthResult> SyncGoogleAccountAsync(string email, string fullName, string googleSubject, CancellationToken cancellationToken = default)
+    public async Task<InstructorAuthResult> SyncGoogleAccountAsync(string email, string fullName, string googleSubject,string avatarUrl, CancellationToken cancellationToken = default)
     {
         var userAccount = await _dbContext.Users
             .Include(x => x.UserRoles)
@@ -171,13 +171,14 @@ public class InstructorService : IInstructorService
         if (string.IsNullOrWhiteSpace(userAccount.GoogleSubject))
         {
             userAccount.GoogleSubject = googleSubject;
+            userAccount.AvatarUrl = avatarUrl;
         }
         else if (!string.Equals(userAccount.GoogleSubject, googleSubject, StringComparison.Ordinal))
         {
             throw new InvalidOperationException("Google account does not match the registered email");
         }
 
-        userAccount.FullName = fullName;
+        // userAccount.FullName = fullName;
         await EnsureRoleAssignedAsync(userAccount, RoleNames.Coach, cancellationToken);
         await _dbContext.SaveChangesAsync(cancellationToken);
 

@@ -66,7 +66,7 @@ public class AuthController : ControllerBase
         InstructorAuthResult instructorResult;
         try
         {
-            instructorResult = await _instructorService.SyncGoogleAccountAsync(googleUser.Email, googleUser.Name, googleUser.Subject, cancellationToken);
+            instructorResult = await _instructorService.SyncGoogleAccountAsync(googleUser.Email, googleUser.Name, googleUser.Subject,googleUser.AvatarUrl, cancellationToken);
         }
         catch (InvalidOperationException ex)
         {

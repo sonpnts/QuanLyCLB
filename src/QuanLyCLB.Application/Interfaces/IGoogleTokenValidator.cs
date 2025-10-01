@@ -5,4 +5,4 @@ public interface IGoogleTokenValidator
     Task<GoogleUserInfo?> ValidateAsync(string idToken, CancellationToken cancellationToken = default);
 }
 
-public record GoogleUserInfo(string Subject, string Email, string Name);
+public record GoogleUserInfo(string Subject, string Email, string Name, string AvatarUrl);

@@ -25,7 +25,7 @@ public class GoogleTokenValidator : IGoogleTokenValidator
         try
         {
             var payload = await GoogleJsonWebSignature.ValidateAsync(idToken, _settings);
-            return new GoogleUserInfo(payload.Subject, payload.Email, payload.Name);
+            return new GoogleUserInfo(payload.Subject, payload.Email, payload.Name, payload.Picture);
         }
         catch (Exception ex)
         {

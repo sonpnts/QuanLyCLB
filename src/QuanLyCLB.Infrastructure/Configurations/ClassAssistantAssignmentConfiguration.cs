@@ -17,7 +17,7 @@ public class ClassAssistantAssignmentConfiguration : IEntityTypeConfiguration<Cl
         builder.HasOne(x => x.TrainingClass)
             .WithMany(x => x.AssistantAssignments)
             .HasForeignKey(x => x.TrainingClassId)
-            .OnDelete(DeleteBehavior.Cascade);
+            .OnDelete(DeleteBehavior.NoAction);
 
         builder.HasOne(x => x.ClassSchedule)
             .WithMany()
