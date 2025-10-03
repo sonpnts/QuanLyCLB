@@ -1,0 +1,38 @@
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using QuanLyCLB.Application.Entities;
+
+namespace QuanLyCLB.Infrastructure.Configurations;
+
+public class UserAccountConfiguration : IEntityTypeConfiguration<UserAccount>
+{
+    public void Configure(EntityTypeBuilder<UserAccount> builder)
+    {
+        builder.ToTable("Users");
+        builder.HasKey(x => x.Id);
+        builder.HasIndex(x => x.Email).IsUnique();
+        builder.HasIndex(x => x.Username).IsUnique();
+        builder.Property(x => x.Username).HasMaxLength(200).IsRequired();
+        builder.Property(x => x.Email).HasMaxLength(200).IsRequired();
+        builder.Property(x => x.FullName).HasMaxLength(200).IsRequired();
+        builder.Property(x => x.PhoneNumber).HasMaxLength(50);
+        builder.Property(x => x.AvatarUrl).HasMaxLength(1024);
+        builder.Property(x => x.GoogleSubject).HasMaxLength(200);
+        builder.Property(x => x.PasswordHash).HasMaxLength(512);
+        builder.Property(x => x.PasswordSalt).HasMaxLength(256);
+        builder.Property(x => x.SkillLevel).HasMaxLength(200).HasDefaultValue(string.Empty).IsRequired();
+        builder.Property(x => x.Certification).HasMaxLength(500);
+        builder.Property(x => x.IsActive).HasDefaultValue(true);
+
+        builder.HasMany(x => x.UserRoles)
+            .WithOne(x => x.User)
+            .HasForeignKey(x => x.UserAccountId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.HasMany(x => x.PasswordResetOtps)
+            .WithOne(x => x.User)
+            .HasForeignKey(x => x.UserAccountId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+    }
+}
