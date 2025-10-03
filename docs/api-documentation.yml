@@ -1,0 +1,1833 @@
+openapi: 3.0.4
+info:
+  title: QuanLyCLB.Api
+  version: '1.0'
+paths:
+  /api/Attendance/check-in:
+    post:
+      tags:
+        - Attendance
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CheckInRequest'
+          text/json:
+            schema:
+              $ref: '#/components/schemas/CheckInRequest'
+          application/*+json:
+            schema:
+              $ref: '#/components/schemas/CheckInRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/AttendanceRecordDto'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AttendanceRecordDto'
+            text/json:
+              schema:
+                $ref: '#/components/schemas/AttendanceRecordDto'
+  /api/Attendance/manual:
+    post:
+      tags:
+        - Attendance
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ManualAttendanceRequest'
+          text/json:
+            schema:
+              $ref: '#/components/schemas/ManualAttendanceRequest'
+          application/*+json:
+            schema:
+              $ref: '#/components/schemas/ManualAttendanceRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/AttendanceRecordDto'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AttendanceRecordDto'
+            text/json:
+              schema:
+                $ref: '#/components/schemas/AttendanceRecordDto'
+  /api/Attendance/coach/{coachId}:
+    get:
+      tags:
+        - Attendance
+      parameters:
+        - name: coachId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: fromDate
+          in: query
+          schema:
+            type: string
+            format: date
+        - name: toDate
+          in: query
+          schema:
+            type: string
+            format: date
+      responses:
+        '200':
+          description: OK
+          content:
+            text/plain:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AttendanceRecordDto'
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AttendanceRecordDto'
+            text/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AttendanceRecordDto'
+  /api/Attendance/tickets:
+    post:
+      tags:
+        - Attendance
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateTicketRequest'
+          text/json:
+            schema:
+              $ref: '#/components/schemas/CreateTicketRequest'
+          application/*+json:
+            schema:
+              $ref: '#/components/schemas/CreateTicketRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/AttendanceTicketDto'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AttendanceTicketDto'
+            text/json:
+              schema:
+                $ref: '#/components/schemas/AttendanceTicketDto'
+  /api/Attendance/tickets/{ticketId}/approval:
+    post:
+      tags:
+        - Attendance
+      parameters:
+        - name: ticketId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TicketApprovalRequest'
+          text/json:
+            schema:
+              $ref: '#/components/schemas/TicketApprovalRequest'
+          application/*+json:
+            schema:
+              $ref: '#/components/schemas/TicketApprovalRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/AttendanceTicketDto'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AttendanceTicketDto'
+            text/json:
+              schema:
+                $ref: '#/components/schemas/AttendanceTicketDto'
+  /api/Auth/google:
+    post:
+      tags:
+        - Auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GoogleLoginRequest'
+          text/json:
+            schema:
+              $ref: '#/components/schemas/GoogleLoginRequest'
+          application/*+json:
+            schema:
+              $ref: '#/components/schemas/GoogleLoginRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+            text/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+  /api/Auth/password:
+    post:
+      tags:
+        - Auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PasswordLoginRequest'
+          text/json:
+            schema:
+              $ref: '#/components/schemas/PasswordLoginRequest'
+          application/*+json:
+            schema:
+              $ref: '#/components/schemas/PasswordLoginRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+            text/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+  /api/Branches:
+    get:
+      tags:
+        - Branches
+      parameters:
+        - name: pageNumber
+          in: query
+          schema:
+            type: integer
+            format: int32
+            default: 1
+        - name: pageSize
+          in: query
+          schema:
+            type: integer
+            format: int32
+            default: 20
+      responses:
+        '200':
+          description: OK
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/BranchDtoPagedResult'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BranchDtoPagedResult'
+            text/json:
+              schema:
+                $ref: '#/components/schemas/BranchDtoPagedResult'
+    post:
+      tags:
+        - Branches
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateBranchRequest'
+          text/json:
+            schema:
+              $ref: '#/components/schemas/CreateBranchRequest'
+          application/*+json:
+            schema:
+              $ref: '#/components/schemas/CreateBranchRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/BranchDto'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BranchDto'
+            text/json:
+              schema:
+                $ref: '#/components/schemas/BranchDto'
+  /api/Branches/{id}:
+    get:
+      tags:
+        - Branches
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: OK
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/BranchDto'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BranchDto'
+            text/json:
+              schema:
+                $ref: '#/components/schemas/BranchDto'
+    put:
+      tags:
+        - Branches
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateBranchRequest'
+          text/json:
+            schema:
+              $ref: '#/components/schemas/UpdateBranchRequest'
+          application/*+json:
+            schema:
+              $ref: '#/components/schemas/UpdateBranchRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/BranchDto'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BranchDto'
+            text/json:
+              schema:
+                $ref: '#/components/schemas/BranchDto'
+    delete:
+      tags:
+        - Branches
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: OK
+  /api/Classes:
+    get:
+      tags:
+        - Classes
+      parameters:
+        - name: pageNumber
+          in: query
+          schema:
+            type: integer
+            format: int32
+            default: 1
+        - name: pageSize
+          in: query
+          schema:
+            type: integer
+            format: int32
+            default: 20
+      responses:
+        '200':
+          description: OK
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/TrainingClassDtoPagedResult'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TrainingClassDtoPagedResult'
+            text/json:
+              schema:
+                $ref: '#/components/schemas/TrainingClassDtoPagedResult'
+    post:
+      tags:
+        - Classes
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateTrainingClassRequest'
+          text/json:
+            schema:
+              $ref: '#/components/schemas/CreateTrainingClassRequest'
+          application/*+json:
+            schema:
+              $ref: '#/components/schemas/CreateTrainingClassRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/TrainingClassDto'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TrainingClassDto'
+            text/json:
+              schema:
+                $ref: '#/components/schemas/TrainingClassDto'
+  /api/Classes/{id}:
+    get:
+      tags:
+        - Classes
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: OK
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/TrainingClassDto'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TrainingClassDto'
+            text/json:
+              schema:
+                $ref: '#/components/schemas/TrainingClassDto'
+    put:
+      tags:
+        - Classes
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateTrainingClassRequest'
+          text/json:
+            schema:
+              $ref: '#/components/schemas/UpdateTrainingClassRequest'
+          application/*+json:
+            schema:
+              $ref: '#/components/schemas/UpdateTrainingClassRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/TrainingClassDto'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TrainingClassDto'
+            text/json:
+              schema:
+                $ref: '#/components/schemas/TrainingClassDto'
+    delete:
+      tags:
+        - Classes
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: OK
+  /api/Classes/{classId}/schedules:
+    get:
+      tags:
+        - Classes
+      parameters:
+        - name: classId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: OK
+          content:
+            text/plain:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ClassScheduleDto'
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ClassScheduleDto'
+            text/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ClassScheduleDto'
+    post:
+      tags:
+        - Classes
+      parameters:
+        - name: classId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BulkCreateScheduleRequest'
+          text/json:
+            schema:
+              $ref: '#/components/schemas/BulkCreateScheduleRequest'
+          application/*+json:
+            schema:
+              $ref: '#/components/schemas/BulkCreateScheduleRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            text/plain:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ClassScheduleDto'
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ClassScheduleDto'
+            text/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ClassScheduleDto'
+  /api/Instructors:
+    get:
+      tags:
+        - Instructors
+      parameters:
+        - name: pageNumber
+          in: query
+          schema:
+            type: integer
+            format: int32
+            default: 1
+        - name: pageSize
+          in: query
+          schema:
+            type: integer
+            format: int32
+            default: 20
+      responses:
+        '200':
+          description: OK
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/InstructorDtoPagedResult'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InstructorDtoPagedResult'
+            text/json:
+              schema:
+                $ref: '#/components/schemas/InstructorDtoPagedResult'
+    post:
+      tags:
+        - Instructors
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateInstructorRequest'
+          text/json:
+            schema:
+              $ref: '#/components/schemas/CreateInstructorRequest'
+          application/*+json:
+            schema:
+              $ref: '#/components/schemas/CreateInstructorRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/InstructorDto'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InstructorDto'
+            text/json:
+              schema:
+                $ref: '#/components/schemas/InstructorDto'
+  /api/Instructors/{id}:
+    get:
+      tags:
+        - Instructors
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: OK
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/InstructorDto'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InstructorDto'
+            text/json:
+              schema:
+                $ref: '#/components/schemas/InstructorDto'
+    put:
+      tags:
+        - Instructors
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateInstructorRequest'
+          text/json:
+            schema:
+              $ref: '#/components/schemas/UpdateInstructorRequest'
+          application/*+json:
+            schema:
+              $ref: '#/components/schemas/UpdateInstructorRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/InstructorDto'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InstructorDto'
+            text/json:
+              schema:
+                $ref: '#/components/schemas/InstructorDto'
+    delete:
+      tags:
+        - Instructors
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: OK
+  /api/Payroll/generate:
+    post:
+      tags:
+        - Payroll
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GeneratePayrollRequest'
+          text/json:
+            schema:
+              $ref: '#/components/schemas/GeneratePayrollRequest'
+          application/*+json:
+            schema:
+              $ref: '#/components/schemas/GeneratePayrollRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/PayrollPeriodDto'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PayrollPeriodDto'
+            text/json:
+              schema:
+                $ref: '#/components/schemas/PayrollPeriodDto'
+  /api/Payroll/coach/{coachId}:
+    get:
+      tags:
+        - Payroll
+      parameters:
+        - name: coachId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: OK
+          content:
+            text/plain:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PayrollPeriodDto'
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PayrollPeriodDto'
+            text/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PayrollPeriodDto'
+  /api/Payroll/{payrollId}:
+    get:
+      tags:
+        - Payroll
+      parameters:
+        - name: payrollId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: OK
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/PayrollPeriodDto'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PayrollPeriodDto'
+            text/json:
+              schema:
+                $ref: '#/components/schemas/PayrollPeriodDto'
+  /api/Schedules/{id}:
+    get:
+      tags:
+        - Schedules
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: OK
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/ClassScheduleDto'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClassScheduleDto'
+            text/json:
+              schema:
+                $ref: '#/components/schemas/ClassScheduleDto'
+    put:
+      tags:
+        - Schedules
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateClassScheduleRequest'
+          text/json:
+            schema:
+              $ref: '#/components/schemas/UpdateClassScheduleRequest'
+          application/*+json:
+            schema:
+              $ref: '#/components/schemas/UpdateClassScheduleRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/ClassScheduleDto'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClassScheduleDto'
+            text/json:
+              schema:
+                $ref: '#/components/schemas/ClassScheduleDto'
+    delete:
+      tags:
+        - Schedules
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: OK
+  /api/Schedules:
+    post:
+      tags:
+        - Schedules
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateClassScheduleRequest'
+          text/json:
+            schema:
+              $ref: '#/components/schemas/CreateClassScheduleRequest'
+          application/*+json:
+            schema:
+              $ref: '#/components/schemas/CreateClassScheduleRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/ClassScheduleDto'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClassScheduleDto'
+            text/json:
+              schema:
+                $ref: '#/components/schemas/ClassScheduleDto'
+  /api/Users:
+    get:
+      tags:
+        - Users
+      responses:
+        '200':
+          description: OK
+          content:
+            text/plain:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserDto'
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserDto'
+            text/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserDto'
+    post:
+      tags:
+        - Users
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateUserRequest'
+          text/json:
+            schema:
+              $ref: '#/components/schemas/CreateUserRequest'
+          application/*+json:
+            schema:
+              $ref: '#/components/schemas/CreateUserRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/UserDto'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserDto'
+            text/json:
+              schema:
+                $ref: '#/components/schemas/UserDto'
+  /api/Users/{id}:
+    get:
+      tags:
+        - Users
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: OK
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/UserDto'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserDto'
+            text/json:
+              schema:
+                $ref: '#/components/schemas/UserDto'
+    put:
+      tags:
+        - Users
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateUserRequest'
+          text/json:
+            schema:
+              $ref: '#/components/schemas/UpdateUserRequest'
+          application/*+json:
+            schema:
+              $ref: '#/components/schemas/UpdateUserRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/UserDto'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserDto'
+            text/json:
+              schema:
+                $ref: '#/components/schemas/UserDto'
+    delete:
+      tags:
+        - Users
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: OK
+  /api/Users/{id}/email:
+    put:
+      tags:
+        - Users
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChangeUserEmailRequest'
+          text/json:
+            schema:
+              $ref: '#/components/schemas/ChangeUserEmailRequest'
+          application/*+json:
+            schema:
+              $ref: '#/components/schemas/ChangeUserEmailRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/UserDto'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserDto'
+            text/json:
+              schema:
+                $ref: '#/components/schemas/UserDto'
+  /api/Users/{id}/name:
+    put:
+      tags:
+        - Users
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateUserNameRequest'
+          text/json:
+            schema:
+              $ref: '#/components/schemas/UpdateUserNameRequest'
+          application/*+json:
+            schema:
+              $ref: '#/components/schemas/UpdateUserNameRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/UserDto'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserDto'
+            text/json:
+              schema:
+                $ref: '#/components/schemas/UserDto'
+  /api/Users/forgot-password:
+    post:
+      tags:
+        - Users
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ForgotPasswordRequest'
+          text/json:
+            schema:
+              $ref: '#/components/schemas/ForgotPasswordRequest'
+          application/*+json:
+            schema:
+              $ref: '#/components/schemas/ForgotPasswordRequest'
+      responses:
+        '200':
+          description: OK
+  /api/Users/reset-password:
+    post:
+      tags:
+        - Users
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ResetPasswordRequest'
+          text/json:
+            schema:
+              $ref: '#/components/schemas/ResetPasswordRequest'
+          application/*+json:
+            schema:
+              $ref: '#/components/schemas/ResetPasswordRequest'
+      responses:
+        '200':
+          description: OK
+components:
+  schemas:
+    AttendanceRecordDto:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        classScheduleId:
+          type: string
+          format: uuid
+        coachId:
+          type: string
+          format: uuid
+        checkedInAt:
+          type: string
+          format: date-time
+        latitude:
+          type: number
+          format: double
+        longitude:
+          type: number
+          format: double
+        status:
+          $ref: '#/components/schemas/AttendanceStatus'
+        notes:
+          type: string
+          nullable: true
+        ticketId:
+          type: string
+          format: uuid
+          nullable: true
+      additionalProperties: false
+    AttendanceStatus:
+      enum:
+        - 0
+        - 1
+        - 2
+        - 3
+        - 4
+      type: integer
+      format: int32
+    AttendanceTicketDto:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        classScheduleId:
+          type: string
+          format: uuid
+        coachId:
+          type: string
+          format: uuid
+        createdAt:
+          type: string
+          format: date-time
+        reason:
+          type: string
+          nullable: true
+        createdBy:
+          type: string
+          nullable: true
+        isApproved:
+          type: boolean
+        approvedBy:
+          type: string
+          nullable: true
+        approvedAt:
+          type: string
+          format: date-time
+          nullable: true
+        createdByUserId:
+          type: string
+          format: uuid
+          nullable: true
+        updatedAt:
+          type: string
+          format: date-time
+          nullable: true
+        updatedByUserId:
+          type: string
+          format: uuid
+          nullable: true
+      additionalProperties: false
+    AuthResponse:
+      type: object
+      properties:
+        accessToken:
+          type: string
+          nullable: true
+        expiresAtUtc:
+          type: string
+          format: date-time
+        instructor:
+          $ref: '#/components/schemas/InstructorDto'
+        roles:
+          type: array
+          items:
+            type: string
+          nullable: true
+      additionalProperties: false
+    BranchDto:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+          nullable: true
+        address:
+          type: string
+          nullable: true
+        latitude:
+          type: number
+          format: double
+        longitude:
+          type: number
+          format: double
+        allowedRadiusMeters:
+          type: number
+          format: double
+        googleMapsEmbedUrl:
+          type: string
+          nullable: true
+      additionalProperties: false
+    BranchDtoPagedResult:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/BranchDto'
+          nullable: true
+        totalCount:
+          type: integer
+          format: int32
+        pageNumber:
+          type: integer
+          format: int32
+        pageSize:
+          type: integer
+          format: int32
+        totalPages:
+          type: integer
+          format: int32
+          readOnly: true
+      additionalProperties: false
+    BulkCreateScheduleRequest:
+      type: object
+      properties:
+        trainingClassId:
+          type: string
+          format: uuid
+        daysOfWeek:
+          type: array
+          items:
+            $ref: '#/components/schemas/DayOfWeek'
+          nullable: true
+        startTime:
+          type: string
+          format: time
+        endTime:
+          type: string
+          format: time
+        branchId:
+          type: string
+          format: uuid
+      additionalProperties: false
+    ChangeUserEmailRequest:
+      type: object
+      properties:
+        newEmail:
+          type: string
+          nullable: true
+        updateUsername:
+          type: boolean
+      additionalProperties: false
+    CheckInRequest:
+      type: object
+      properties:
+        classScheduleId:
+          type: string
+          format: uuid
+        coachId:
+          type: string
+          format: uuid
+        checkedInAt:
+          type: string
+          format: date-time
+        latitude:
+          type: number
+          format: double
+        longitude:
+          type: number
+          format: double
+      additionalProperties: false
+    ClassScheduleDto:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        trainingClassId:
+          type: string
+          format: uuid
+        dayOfWeek:
+          $ref: '#/components/schemas/DayOfWeek'
+        startTime:
+          type: string
+          format: time
+        endTime:
+          type: string
+          format: time
+        branch:
+          $ref: '#/components/schemas/BranchDto'
+      additionalProperties: false
+    CreateBranchRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          nullable: true
+        address:
+          type: string
+          nullable: true
+        latitude:
+          type: number
+          format: double
+        longitude:
+          type: number
+          format: double
+        allowedRadiusMeters:
+          type: number
+          format: double
+        googleMapsEmbedUrl:
+          type: string
+          nullable: true
+      additionalProperties: false
+    CreateClassScheduleRequest:
+      type: object
+      properties:
+        trainingClassId:
+          type: string
+          format: uuid
+        dayOfWeek:
+          $ref: '#/components/schemas/DayOfWeek'
+        startTime:
+          type: string
+          format: time
+        endTime:
+          type: string
+          format: time
+        branchId:
+          type: string
+          format: uuid
+      additionalProperties: false
+    CreateInstructorRequest:
+      type: object
+      properties:
+        fullName:
+          type: string
+          nullable: true
+        email:
+          type: string
+          nullable: true
+        phoneNumber:
+          type: string
+          nullable: true
+        skillLevel:
+          type: string
+          nullable: true
+        certification:
+          type: string
+          nullable: true
+      additionalProperties: false
+    CreateTicketRequest:
+      type: object
+      properties:
+        classScheduleId:
+          type: string
+          format: uuid
+        coachId:
+          type: string
+          format: uuid
+        reason:
+          type: string
+          nullable: true
+        createdBy:
+          type: string
+          nullable: true
+        createdByUserId:
+          type: string
+          format: uuid
+          nullable: true
+      additionalProperties: false
+    CreateTrainingClassRequest:
+      type: object
+      properties:
+        code:
+          type: string
+          nullable: true
+        name:
+          type: string
+          nullable: true
+        description:
+          type: string
+          nullable: true
+        startDate:
+          type: string
+          format: date
+        endDate:
+          type: string
+          format: date
+          nullable: true
+        maxStudents:
+          type: integer
+          format: int32
+        coachId:
+          type: string
+          format: uuid
+      additionalProperties: false
+    CreateUserRequest:
+      type: object
+      properties:
+        username:
+          type: string
+          nullable: true
+        email:
+          type: string
+          nullable: true
+        fullName:
+          type: string
+          nullable: true
+        phoneNumber:
+          type: string
+          nullable: true
+        password:
+          type: string
+          nullable: true
+        isActive:
+          type: boolean
+        skillLevel:
+          type: string
+          nullable: true
+        certification:
+          type: string
+          nullable: true
+        avatarUrl:
+          type: string
+          nullable: true
+        roles:
+          type: array
+          items:
+            type: string
+          nullable: true
+      additionalProperties: false
+    DayOfWeek:
+      enum:
+        - 0
+        - 1
+        - 2
+        - 3
+        - 4
+        - 5
+        - 6
+      type: integer
+      format: int32
+    ForgotPasswordRequest:
+      type: object
+      properties:
+        email:
+          type: string
+          nullable: true
+      additionalProperties: false
+    GeneratePayrollRequest:
+      type: object
+      properties:
+        coachId:
+          type: string
+          format: uuid
+        year:
+          type: integer
+          format: int32
+        month:
+          type: integer
+          format: int32
+      additionalProperties: false
+    GoogleLoginRequest:
+      type: object
+      properties:
+        idToken:
+          type: string
+          nullable: true
+      additionalProperties: false
+    InstructorDto:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        fullName:
+          type: string
+          nullable: true
+        email:
+          type: string
+          nullable: true
+        phoneNumber:
+          type: string
+          nullable: true
+        skillLevel:
+          type: string
+          nullable: true
+        certification:
+          type: string
+          nullable: true
+        isActive:
+          type: boolean
+      additionalProperties: false
+    InstructorDtoPagedResult:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/InstructorDto'
+          nullable: true
+        totalCount:
+          type: integer
+          format: int32
+        pageNumber:
+          type: integer
+          format: int32
+        pageSize:
+          type: integer
+          format: int32
+        totalPages:
+          type: integer
+          format: int32
+          readOnly: true
+      additionalProperties: false
+    ManualAttendanceRequest:
+      type: object
+      properties:
+        classScheduleId:
+          type: string
+          format: uuid
+        coachId:
+          type: string
+          format: uuid
+        occurredAt:
+          type: string
+          format: date-time
+        status:
+          $ref: '#/components/schemas/AttendanceStatus'
+        notes:
+          type: string
+          nullable: true
+        ticketId:
+          type: string
+          format: uuid
+      additionalProperties: false
+    PasswordLoginRequest:
+      type: object
+      properties:
+        username:
+          type: string
+          nullable: true
+        password:
+          type: string
+          nullable: true
+      additionalProperties: false
+    PayrollDetailDto:
+      type: object
+      properties:
+        attendanceRecordId:
+          type: string
+          format: uuid
+        checkedInAt:
+          type: string
+          format: date-time
+        hours:
+          type: number
+          format: double
+        amount:
+          type: number
+          format: double
+      additionalProperties: false
+    PayrollPeriodDto:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        coachId:
+          type: string
+          format: uuid
+        year:
+          type: integer
+          format: int32
+        month:
+          type: integer
+          format: int32
+        totalHours:
+          type: number
+          format: double
+        totalAmount:
+          type: number
+          format: double
+        generatedAt:
+          type: string
+          format: date-time
+        details:
+          type: array
+          items:
+            $ref: '#/components/schemas/PayrollDetailDto'
+          nullable: true
+      additionalProperties: false
+    ResetPasswordRequest:
+      type: object
+      properties:
+        email:
+          type: string
+          nullable: true
+        otpCode:
+          type: string
+          nullable: true
+        newPassword:
+          type: string
+          nullable: true
+      additionalProperties: false
+    TicketApprovalRequest:
+      type: object
+      properties:
+        approve:
+          type: boolean
+        approver:
+          type: string
+          nullable: true
+        notes:
+          type: string
+          nullable: true
+        updatedByUserId:
+          type: string
+          format: uuid
+          nullable: true
+      additionalProperties: false
+    TrainingClassDto:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        code:
+          type: string
+          nullable: true
+        name:
+          type: string
+          nullable: true
+        description:
+          type: string
+          nullable: true
+        startDate:
+          type: string
+          format: date
+        endDate:
+          type: string
+          format: date
+          nullable: true
+        maxStudents:
+          type: integer
+          format: int32
+        coachId:
+          type: string
+          format: uuid
+      additionalProperties: false
+    TrainingClassDtoPagedResult:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/TrainingClassDto'
+          nullable: true
+        totalCount:
+          type: integer
+          format: int32
+        pageNumber:
+          type: integer
+          format: int32
+        pageSize:
+          type: integer
+          format: int32
+        totalPages:
+          type: integer
+          format: int32
+          readOnly: true
+      additionalProperties: false
+    UpdateBranchRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          nullable: true
+        address:
+          type: string
+          nullable: true
+        latitude:
+          type: number
+          format: double
+        longitude:
+          type: number
+          format: double
+        allowedRadiusMeters:
+          type: number
+          format: double
+        googleMapsEmbedUrl:
+          type: string
+          nullable: true
+        isActive:
+          type: boolean
+      additionalProperties: false
+    UpdateClassScheduleRequest:
+      type: object
+      properties:
+        dayOfWeek:
+          $ref: '#/components/schemas/DayOfWeek'
+        startTime:
+          type: string
+          format: time
+        endTime:
+          type: string
+          format: time
+        branchId:
+          type: string
+          format: uuid
+      additionalProperties: false
+    UpdateInstructorRequest:
+      type: object
+      properties:
+        fullName:
+          type: string
+          nullable: true
+        phoneNumber:
+          type: string
+          nullable: true
+        skillLevel:
+          type: string
+          nullable: true
+        certification:
+          type: string
+          nullable: true
+        isActive:
+          type: boolean
+      additionalProperties: false
+    UpdateTrainingClassRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          nullable: true
+        description:
+          type: string
+          nullable: true
+        startDate:
+          type: string
+          format: date
+        endDate:
+          type: string
+          format: date
+          nullable: true
+        maxStudents:
+          type: integer
+          format: int32
+        coachId:
+          type: string
+          format: uuid
+      additionalProperties: false
+    UpdateUserNameRequest:
+      type: object
+      properties:
+        fullName:
+          type: string
+          nullable: true
+      additionalProperties: false
+    UpdateUserRequest:
+      type: object
+      properties:
+        fullName:
+          type: string
+          nullable: true
+        phoneNumber:
+          type: string
+          nullable: true
+        avatarUrl:
+          type: string
+          nullable: true
+        isActive:
+          type: boolean
+        skillLevel:
+          type: string
+          nullable: true
+        certification:
+          type: string
+          nullable: true
+        roles:
+          type: array
+          items:
+            type: string
+          nullable: true
+      additionalProperties: false
+    UserDto:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        username:
+          type: string
+          nullable: true
+        email:
+          type: string
+          nullable: true
+        fullName:
+          type: string
+          nullable: true
+        phoneNumber:
+          type: string
+          nullable: true
+        avatarUrl:
+          type: string
+          nullable: true
+        skillLevel:
+          type: string
+          nullable: true
+        certification:
+          type: string
+          nullable: true
+        isActive:
+          type: boolean
+        hasPassword:
+          type: boolean
+        isGoogleAccount:
+          type: boolean
+        roles:
+          type: array
+          items:
+            type: string
+          nullable: true
+      additionalProperties: false

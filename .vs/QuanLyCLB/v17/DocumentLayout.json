@@ -3,12 +3,16 @@
   "WorkspaceRootPath": "D:\\Temp\\QuanLyCLB\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{A9A0F6C8-03BF-4F1B-8E8B-0BCE88C727DD}|src\\QuanLyCLB.Api\\QuanLyCLB.Api.csproj|d:\\temp\\quanlyclb\\src\\quanlyclb.api\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A9A0F6C8-03BF-4F1B-8E8B-0BCE88C727DD}|src\\QuanLyCLB.Api\\QuanLyCLB.Api.csproj|solutionrelative:src\\quanlyclb.api\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{0FD3F471-1A46-4C91-92CE-FF63E5C2B10B}|Common\\Common.csproj|d:\\temp\\quanlyclb\\common\\common.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
       "RelativeMoniker": "D:0:0:{0FD3F471-1A46-4C91-92CE-FF63E5C2B10B}|Common\\Common.csproj|solutionrelative:common\\common.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{0FD3F471-1A46-4C91-92CE-FF63E5C2B10B}|Common\\Common.csproj|d:\\temp\\quanlyclb\\common\\class1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{0FD3F471-1A46-4C91-92CE-FF63E5C2B10B}|Common\\Common.csproj|solutionrelative:common\\class1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\Temp\\QuanLyCLB\\Common\\Class1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Common\\Class1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -18,21 +22,8 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 0,
+          "SelectedChildIndex": 8,
           "Children": [
-            {
-              "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "Common",
-              "DocumentMoniker": "D:\\Temp\\QuanLyCLB\\Common\\Common.csproj",
-              "RelativeDocumentMoniker": "Common\\Common.csproj",
-              "ToolTip": "D:\\Temp\\QuanLyCLB\\Common\\Common.csproj",
-              "RelativeToolTip": "Common\\Common.csproj",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
-              "WhenOpened": "2025-09-30T03:56:17.122Z",
-              "EditorCaption": ""
-            },
             {
               "$type": "Bookmark",
               "Name": "ST:0:0:{d78612c7-9962-4b83-95d9-268046dad23a}"
@@ -67,16 +58,40 @@
             },
             {
               "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "Program.cs",
+              "DocumentMoniker": "D:\\Temp\\QuanLyCLB\\src\\QuanLyCLB.Api\\Program.cs",
+              "RelativeDocumentMoniker": "src\\QuanLyCLB.Api\\Program.cs",
+              "ToolTip": "D:\\Temp\\QuanLyCLB\\src\\QuanLyCLB.Api\\Program.cs",
+              "RelativeToolTip": "src\\QuanLyCLB.Api\\Program.cs",
+              "ViewState": "AgIAABUAAAAAAAAAAAAAAAoAAAArAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-03T07:55:43.629Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
               "DocumentIndex": 1,
+              "Title": "Common.csproj",
+              "DocumentMoniker": "D:\\Temp\\QuanLyCLB\\Common\\Common.csproj",
+              "RelativeDocumentMoniker": "Common\\Common.csproj",
+              "ToolTip": "D:\\Temp\\QuanLyCLB\\Common\\Common.csproj",
+              "RelativeToolTip": "Common\\Common.csproj",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
+              "WhenOpened": "2025-09-30T03:56:17.122Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
               "Title": "Class1.cs",
               "DocumentMoniker": "D:\\Temp\\QuanLyCLB\\Common\\Class1.cs",
               "RelativeDocumentMoniker": "Common\\Class1.cs",
               "ToolTip": "D:\\Temp\\QuanLyCLB\\Common\\Class1.cs",
               "RelativeToolTip": "Common\\Class1.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-09-30T03:55:50.01Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-09-30T03:55:50.01Z"
             }
           ]
         }
